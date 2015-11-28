@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto" android:layout_width="fill_parent"
+    android:layout_height="fill_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:showIn="@layout/activity_main" tools:context=".MainActivity"
+    android:background="#000000">
+
+    <ImageButton
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:id="@+id/centerButton"
+        android:background="@drawable/button"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:layout_alignLeft="@+id/topButton"
+        android:layout_alignStart="@+id/topButton"
+        android:contentDescription="@string/butttonss"
+        android:onClick="centerButtonClicked" />
+
+    <ImageButton
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:id="@+id/topButton"
+        android:background="@drawable/button"
+        android:layout_centerHorizontal="true"
+        android:layout_alignBottom="@+id/centerButton"
+        android:layout_marginBottom="124dp"
+        android:contentDescription="@string/Button"
+        android:onClick="topButtonClicked"
+        android:nestedScrollingEnabled="false" />
+
+    <ImageButton
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:id="@+id/buttomButton"
+        android:background="@drawable/button"
+        android:layout_centerHorizontal="true"
+        android:layout_alignTop="@+id/centerButton"
+        android:layout_marginTop="124dp"
+        android:contentDescription="@string/buttons"
+        android:onClick="bottomButtonClicked" />
+
+</RelativeLayout>
