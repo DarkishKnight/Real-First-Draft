@@ -17,6 +17,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.nio.channels.FileChannel;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.FileHandler;
@@ -27,12 +30,34 @@ import android.gesture.GestureLibraries;
 public class RecorderPage extends AppCompatActivity {
 
     private MediaRecorder mediaRecorder;
-    private File SDCardpath;
-    private String  OUTPUT_FILE;
-    private String fileName = "";
-    private File audioFile;
+    private MediaPlayer mediaPlayer;
+    File tempFile;
+    String saveToFileName;
 
+    protected void saveFile() {
 
+        File newFile = new File(tempFile.getParent()+File.separator+saveToFileName);
+        tempFile.renameTo(newFile);
+
+        ditchMediaPlayer();
+        try {
+            mediaPlayer=new MediaPlayer();
+            mediaPlayer.setDataSource(newFile.getAbsolutePath());
+            mediaPlayer.prepare();
+            mediaPlayer.start();
+        }
+        catch(IOException ioe) {
+            System.out.println(ioe.getMessage());
+        }
+        // copy tempFile to saveToFileName
+
+        File extDirectory = new File(Environment.getExternalStorageDirectory(),"Humposer");
+        File[] fileList = extDirectory.listFiles();
+        for (int i=0; i<fileList.length; i++) {
+            System.out.println(fileList[i].getAbsoluteFile());
+        }
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,17 +66,6 @@ public class RecorderPage extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-
-        SDCardpath = getFilesDir();
-        File myDataPath = new File(SDCardpath.getAbsolutePath()
-                + "/.My Recordings");
-
-        if (!myDataPath.exists())
-            myDataPath.mkdir();
-
-
-
-        audioFile = new File(myDataPath + "/" + fileName);
         final EditText beginningText = new EditText(this);
 
         beginningText.setHint("Enter Name Here");
@@ -70,7 +84,7 @@ public class RecorderPage extends AppCompatActivity {
                         switch (finalState1[0]++) {
 
 
-                            case 0:
+                            case 0: // begin recording
                                 recordButton.setBackgroundResource(R.drawable.stop);
                                 try {
                                     beginRecording();
@@ -78,7 +92,7 @@ public class RecorderPage extends AppCompatActivity {
                                     e.printStackTrace();
                                 }
                                 break;
-                            case 1:
+                            case 1: // stop recording
                                 recordButton.setBackgroundResource(R.drawable.record);
                                 stopRecording();
                                 AlertDialog.Builder builder = new AlertDialog.Builder(RecorderPage.this);
@@ -93,7 +107,8 @@ public class RecorderPage extends AppCompatActivity {
                                 builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        fileName = input.getText().toString();
+                                        saveToFileName = input.getText().toString();
+                                        saveFile();
                                     }
                                 });
                                 builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -154,15 +169,28 @@ public class RecorderPage extends AppCompatActivity {
 
     private void beginRecording() throws Exception {
         ditchMediaRecorder();
-        File outFile = new File(OUTPUT_FILE);
-        if (outFile.exists())
-            outFile.mkdir();
+
+        String state = Environment.getExternalStorageState();
+        if (Environment.MEDIA_MOUNTED.equals(state)) {
+            System.out.println("External storage is writable");
+        }
+        else {
+            System.out.println("External storage is NOT writable");
+        }
+
+        File audioDir = new File(Environment.getExternalStorageDirectory(),"Humposer");
+//        File audioDir = new File("/data/com.liam/Humposer");
+        if (!audioDir.exists())
+            audioDir.mkdir();
+
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        tempFile = new File(audioDir, "tempAudioFile_"+timeStamp+".3gpp");
 
         mediaRecorder = new MediaRecorder();
         mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
         mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC_ELD);
-        mediaRecorder.setOutputFile(OUTPUT_FILE);
+        mediaRecorder.setOutputFile(tempFile.toString());
         mediaRecorder.prepare();
         mediaRecorder.start();
                     }
@@ -188,15 +216,37 @@ public class RecorderPage extends AppCompatActivity {
 
     }
 
-    public File getAudioFile() {
-        return audioFile;
+    private void ditchMediaPlayer() {
+        if (mediaPlayer != null) {
+            try {
+                mediaPlayer.release();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
-    public void setAudioFile(File audioFile) {
-        this.audioFile = audioFile;
+    public File getTempFile() {
+        return tempFile;
     }
 
-    public void setOUTPUT_FILE(String OUTPUT_FILE) {
-        this.OUTPUT_FILE = OUTPUT_FILE;
+    public void setTempFile(File tempFile) {
+        this.tempFile = tempFile;
+    }
+
+    public String getSaveToFileName() {
+        return saveToFileName;
+    }
+
+    public void setSaveToFileName(String saveToFileName) {
+        this.saveToFileName = saveToFileName;
+    }
+
+    public MediaRecorder getMediaRecorder() {
+        return mediaRecorder;
+    }
+
+    public void setMediaRecorder(MediaRecorder mediaRecorder) {
+        this.mediaRecorder = mediaRecorder;
     }
 }
