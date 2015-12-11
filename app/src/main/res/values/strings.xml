@@ -99,4 +99,5 @@
     </string>
     <string name="title_activity_music_page">MusicPage</string>
     <string name="title_activity_recorder_page">RecorderPage</string>
+    <string name="title_activity_music_player">MusicPlayer</string>
 </resources>
