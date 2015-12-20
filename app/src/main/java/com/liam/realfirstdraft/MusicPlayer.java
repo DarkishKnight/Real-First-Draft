@@ -18,6 +18,7 @@ import android.widget.TextView;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.jar.Attributes;
 
 public class MusicPlayer extends AppCompatActivity {
 
@@ -30,11 +31,19 @@ public class MusicPlayer extends AppCompatActivity {
       //  File newFile = new File(songNameText.getParent()+File.separator+saveToFileName);
       //  songNameText.renameTo(newFile);
 
-     //  File extDirectory = new File(Environment.getExternalStorageDirectory(),"Humposer");
-      //  File[] fileList = extDirectory.listFiles();
-    //  for (int i=0; i<fileList.length; i++) {
-     //       System.out.println(fileList[i].getAbsoluteFile());
-    //   }
+    protected void renameFile() {
+
+        File oldFile = new File(songNameText.getParent() + File.separator + saveToFileName);
+        songNameText.renameTo(oldFile);
+        // copy tempFile to saveToFileName
+
+        File extDirectory = new File(Environment.getExternalStorageDirectory(), "Humposer");
+        File[] fileList = extDirectory.listFiles();
+        for (int i = 0; i < fileList.length; i++) {
+            System.out.println(fileList[i].getAbsoluteFile());
+        }
+
+    }
        // ArrayList<String> fileList; // Initialize all this stuff
 
         //int getSongPosition(String fileList) {
@@ -49,13 +58,22 @@ public class MusicPlayer extends AppCompatActivity {
         final TextView songNameText = (TextView) findViewById(R.id.songNameText);
 
         ImageButton renameButton = (ImageButton) findViewById(R.id.renameButton);
+      File extDirectory = new File(Environment.getExternalStorageDirectory(), "Humposer");
+      final File[] fileList = extDirectory.listFiles();
+
+      
 
         renameButton.setOnClickListener(
                 new ImageButton.OnClickListener(){
                     @Override
                     public void onClick(View v) {
                         AlertDialog.Builder builder = new AlertDialog.Builder(MusicPlayer.this);
-                        builder.setTitle("Song Title Here");
+                        final ArrayList<String> listViewValues = new ArrayList<String>();
+                        for (int i = 0; i < fileList.length; i++) {
+                            System.out.println(fileList[i].getAbsoluteFile());
+                            listViewValues.add(fileList[i].getName());
+                        }
+                        builder.setTitle(saveToFileName);
 
                         final EditText input = new EditText(MusicPlayer.this);
 // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
