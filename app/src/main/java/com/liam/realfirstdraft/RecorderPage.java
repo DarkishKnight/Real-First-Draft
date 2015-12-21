@@ -13,18 +13,11 @@ import android.widget.ImageButton;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.Environment;
-import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.nio.channels.FileChannel;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.logging.FileHandler;
 import java.io.IOException;
-import android.gesture.GestureLibraries;
+
 
 
 public class RecorderPage extends AppCompatActivity {
@@ -53,8 +46,8 @@ public class RecorderPage extends AppCompatActivity {
 
         File extDirectory = new File(Environment.getExternalStorageDirectory(),"Humposer");
         File[] fileList = extDirectory.listFiles();
-        for (int i=0; i<fileList.length; i++) {
-            System.out.println(fileList[i].getAbsoluteFile());
+        for (File aFileList : fileList) {
+            System.out.println(aFileList.getAbsoluteFile());
         }
 
     }

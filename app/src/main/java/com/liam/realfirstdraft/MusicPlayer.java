@@ -2,29 +2,24 @@ package com.liam.realfirstdraft;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.jar.Attributes;
+
 
 public class MusicPlayer extends AppCompatActivity {
 
     String saveToFileName;
-    File songNameText;
-    int getSongPosition;
+    File songFile;
+   // int getSongPosition;
 
     //protected void saveFile() {
 
@@ -33,14 +28,14 @@ public class MusicPlayer extends AppCompatActivity {
 
     protected void renameFile() {
 
-        File oldFile = new File(songNameText.getParent() + File.separator + saveToFileName);
-        songNameText.renameTo(oldFile);
+        File oldFile = new File(songFile.getParent() + File.separator + saveToFileName);
+        songFile.renameTo(oldFile);
         // copy tempFile to saveToFileName
 
         File extDirectory = new File(Environment.getExternalStorageDirectory(), "Humposer");
         File[] fileList = extDirectory.listFiles();
-        for (int i = 0; i < fileList.length; i++) {
-            System.out.println(fileList[i].getAbsoluteFile());
+        for (File aFileList : fileList) {
+            System.out.println(aFileList.getAbsoluteFile());
         }
 
     }
@@ -50,12 +45,15 @@ public class MusicPlayer extends AppCompatActivity {
        //     return fileList.indexOf(category);
        // }
    // }
+        public static TextView songNameText;
+
   @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_music_player);
-
-        final TextView songNameText = (TextView) findViewById(R.id.songNameText);
+      final String id = getIntent().getExtras().getString("listItem");
+      songNameText= (TextView) findViewById(R.id.songNameText);
+      songNameText.setText(id);
 
         ImageButton renameButton = (ImageButton) findViewById(R.id.renameButton);
       File extDirectory = new File(Environment.getExternalStorageDirectory(), "Humposer");
@@ -68,12 +66,13 @@ public class MusicPlayer extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         AlertDialog.Builder builder = new AlertDialog.Builder(MusicPlayer.this);
-                        final ArrayList<String> listViewValues = new ArrayList<String>();
-                        for (int i = 0; i < fileList.length; i++) {
-                            System.out.println(fileList[i].getAbsoluteFile());
-                            listViewValues.add(fileList[i].getName());
+                        final ArrayList<String> listViewValues = new ArrayList<>();
+                        for (File aFileList : fileList) {
+                            System.out.println(aFileList.getAbsoluteFile());
+                            listViewValues.add(aFileList.getName());
                         }
-                        builder.setTitle(saveToFileName);
+                        setTitle(id);
+
 
                         final EditText input = new EditText(MusicPlayer.this);
 // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text

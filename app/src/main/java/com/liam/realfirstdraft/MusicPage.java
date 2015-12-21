@@ -1,41 +1,26 @@
 package com.liam.realfirstdraft;
 
-import android.app.AlertDialog;
-import android.app.LauncherActivity;
-import android.content.ClipData;
-import android.content.Context;
-import android.content.DialogInterface;
+
 import android.content.Intent;
 import android.database.Cursor;
-import android.drm.DrmStore;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Environment;
-import android.provider.MediaStore;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.text.InputType;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
-import android.widget.TextView;
-
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.List;
+
 
 public class MusicPage extends AppCompatActivity {
     ListView musiclist;
+    File[] fileList;
+    ArrayList listViewValues;
+    String listFile;
     Cursor musiccursor;
     int music_column_index;
     int count;
@@ -43,19 +28,19 @@ public class MusicPage extends AppCompatActivity {
     File newFile;
     String fileName;
 
-    protected void renameFile() {
+  protected void renameFile() {
 
-        File oldFile = new File(newFile.getParent() + File.separator + fileName);
-        newFile.renameTo(oldFile);
-        // copy tempFile to saveToFileName
+      File oldFile = new File(newFile.getParent() + File.separator + fileName);
+      newFile.renameTo(oldFile);
+      // copy tempFile to saveToFileName
 
-        File extDirectory = new File(Environment.getExternalStorageDirectory(), "Humposer");
-        File[] fileList = extDirectory.listFiles();
-        for (int i = 0; i < fileList.length; i++) {
-            System.out.println(fileList[i].getAbsoluteFile());
-        }
+      File extDirectory = new File(Environment.getExternalStorageDirectory(), "Humposer");
+      fileList = extDirectory.listFiles();
+      for (int i = 0; i < fileList.length; i++) {
+          System.out.println(fileList[i].getAbsoluteFile());
+      }
 
-    }
+  }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,16 +76,18 @@ public class MusicPage extends AppCompatActivity {
         musiclist = (ListView) findViewById(R.id.listView);
 //        musiclist.setAdapter(new MusicAdapter(getApplicationContext()));
 
-        File extDirectory = new File(Environment.getExternalStorageDirectory(), "Humposer");
-        File[] fileList = extDirectory.listFiles();
 
-        ArrayList<String> listViewValues = new ArrayList<String>();
-        for (int i = 0; i < fileList.length; i++) {
-            System.out.println(fileList[i].getAbsoluteFile());
-            listViewValues.add(fileList[i].getName());
+        File extDirectory = new File(Environment.getExternalStorageDirectory(), "Humposer");
+        fileList = extDirectory.listFiles();
+        listFile = extDirectory.getAbsoluteFile().getName();
+
+        ArrayList<String> listViewValues = new ArrayList<>();
+        for (File aFileList : fileList) {
+            System.out.println(aFileList.getAbsoluteFile());
+            listViewValues.add(aFileList.getName());
         }
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_list_item_1, android.R.id.text1,
                 listViewValues.toArray(new String[listViewValues.size()]));
         musiclist.setAdapter(adapter);
@@ -109,18 +96,29 @@ public class MusicPage extends AppCompatActivity {
         //mMediaPlayer = new MediaPlayer();
     }
 
+
+
+
+
+
+
     protected AdapterView.OnItemClickListener musicgridlistener = new AdapterView.OnItemClickListener() {
         public void onItemClick(AdapterView parent, View v, int position, long id) {
             System.gc();
+            Bundle b = new Bundle();
+            File selectedFile = fileList[((int)id)];
+            b.putString("listItem", String.valueOf(selectedFile));
             Intent g = new Intent(getBaseContext(), MusicPlayer.class);
+            g.putExtras(b);
             startActivity(g);
+
         }
     };
 
 
-           /* music_column_index = musiccursor.getColumnIndexOrThrow("Humposer"+File.separator+);
-            musiccursor.moveToPosition(position);
-            String fileList = musiccursor.getString(music_column_index);
+    /* music_column_index = musiccursor.getColumnIndexOrThrow("Humposer"+File.separator+);
+     musiccursor.moveToPosition(position);
+     String fileList = musiccursor.getString(music_column_index);
 */
             /*final AlertDialog.Builder builder = new AlertDialog.Builder(MusicPage.this);
             builder.setTitle(fileName);
@@ -135,8 +133,8 @@ public class MusicPage extends AppCompatActivity {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     fileName = input.getText().toString();
-                    renameFile();
-                }
+                  */
+                /*
             });
 
             builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -164,7 +162,7 @@ public class MusicPage extends AppCompatActivity {
             });
 
             builder.show();
-           /* try {
+           try {
                 if (mMediaPlayer.isPlaying()) {
                     mMediaPlayer.reset();
                 }
