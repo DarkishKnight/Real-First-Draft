@@ -9,7 +9,7 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:showIn="@layout/activity_recorder_page"
     tools:context="com.liam.realfirstdraft.RecorderPage"
-    android:background="#ffffff"
+    android:background="#478b4f"
     android:clickable="false">
 
     <ImageButton

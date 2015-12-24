@@ -29,7 +29,9 @@
         android:layout_centerVertical="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:background="@drawable/button" />
+        android:background="@drawable/button"
+        android:clickable="true"
+        android:onClick="deleteSong" />
 
     <ImageButton
         android:layout_width="100dp"
@@ -37,7 +39,9 @@
         android:id="@+id/playButton"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
-        android:background="@drawable/button" />
+        android:background="@drawable/button"
+        android:clickable="true"
+        android:onClick="startPlaying" />
 
     <ImageButton
         android:layout_width="100dp"
@@ -46,7 +50,8 @@
         android:layout_alignTop="@+id/playButton"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:background="@drawable/button" />
+        android:background="@drawable/button"
+        android:clickable="true" />
 
     <ImageButton
         android:layout_width="100dp"
@@ -55,6 +60,18 @@
         android:layout_below="@+id/deleteButton"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="51dp"
-        android:background="@drawable/background" />
+        android:background="@drawable/background"
+        android:clickable="true"
+        android:onClick="anylize" />
+
+    <ImageButton
+        android:layout_width="70dp"
+        android:layout_height="50dp"
+        android:id="@+id/backButton2"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:clickable="true"
+        android:background="@drawable/back" />
 
 </RelativeLayout>
