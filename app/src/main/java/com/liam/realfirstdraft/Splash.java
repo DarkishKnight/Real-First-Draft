@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 /**
  * Created by Liam on 11/8/2015.
@@ -17,11 +18,11 @@ public class Splash extends Activity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.splash);
 
-        final ImageView iv = (ImageView) findViewById(R.id.imageView);
+        final RelativeLayout rl = (RelativeLayout) findViewById(R.id.imageView);
         final Animation an = AnimationUtils.loadAnimation(getBaseContext(), R.anim.glow);
         final Animation an2 = AnimationUtils.loadAnimation(getBaseContext(), R.anim.abc_fade_out);
 
-        iv.startAnimation(an);
+        rl.startAnimation(an);
         an.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
@@ -30,7 +31,7 @@ public class Splash extends Activity{
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                iv.startAnimation(an2);
+                rl.startAnimation(an2);
                 finish();
                 Intent a = new Intent(getBaseContext(), MainActivity.class);
                 startActivity(a);
