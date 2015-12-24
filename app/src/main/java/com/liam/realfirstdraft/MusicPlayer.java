@@ -17,11 +17,13 @@ import java.io.File;
 import java.io.IOException;
 
 
-public class MusicPlayer extends AppCompatActivity {
+public class MusicPlayer extends AppCompatActivity  {
 
     String saveToFileName;
     File songFile;
     MediaPlayer mediaPlayer;
+    File newFile;
+
 
 
     //protected void saveFile() {
@@ -31,7 +33,7 @@ public class MusicPlayer extends AppCompatActivity {
 
     protected void renameFile() {
 
-        File newFile = new File(songFile.getParent() + File.separator + saveToFileName);
+        newFile = new File(songFile.getParent() + File.separator + saveToFileName);
         songFile.renameTo(newFile);
         // copy tempFile to saveToFileName
 
@@ -59,7 +61,8 @@ public class MusicPlayer extends AppCompatActivity {
       final String id = getIntent().getExtras().getString("listItem");
       songNameText= (TextView) findViewById(R.id.songNameText);
       songNameText.setText(id);
-      songFile = new File("id");
+      songFile = new File(extDirectory + File.separator + id);
+      newFile = new File(songFile.getParent() + File.separator + saveToFileName);
 
       ImageButton backButton2 = (ImageButton) findViewById(R.id.backButton2);
 
@@ -78,29 +81,31 @@ public class MusicPlayer extends AppCompatActivity {
 
 
 //Button
+
               ImageButton deleteButton = (ImageButton) findViewById(R.id.deleteButton);
       deleteButton.setOnClickListener(
               new ImageButton.OnClickListener() {
                   @Override
                   public void onClick(View v) {
-                      AlertDialog.Builder builder = new AlertDialog.Builder(MusicPlayer.this);
-                      builder.setMessage("Delete Song");
+                      AlertDialog.Builder maker = new AlertDialog.Builder(MusicPlayer.this);
+                      maker.setMessage("Delete Song");
 
-                      builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                      maker.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                           @Override
                           public void onClick(DialogInterface dialog, int which) {
-
+                              songFile.delete();
                           }
                       });
-                          builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                          maker.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                               @Override
                               public void onClick(DialogInterface dialog, int which) {
                                   dialog.cancel();
                               }
-
-
                           });
+                      maker.create();
+                      maker.show();
                   }
+
               }
       );
 
@@ -110,6 +115,7 @@ public class MusicPlayer extends AppCompatActivity {
                   @Override
                   public void onClick(View v) {
                       ditchMediaPlayer();
+                      if (songFile.exists())
                       try {
                           mediaPlayer = new MediaPlayer();
                           mediaPlayer.setDataSource(songFile.getAbsolutePath());
@@ -117,6 +123,16 @@ public class MusicPlayer extends AppCompatActivity {
                           mediaPlayer.start();
                       } catch (IOException ioe) {
                           System.out.println(ioe.getMessage());
+                      }
+                      else{
+                          try {
+                              mediaPlayer = new MediaPlayer();
+                              mediaPlayer.setDataSource(newFile.getAbsolutePath());
+                              mediaPlayer.prepare();
+                              mediaPlayer.start();
+                          } catch (IOException ioe) {
+                              System.out.println(ioe.getMessage());
+                          }
                       }
                   }
               });
@@ -171,6 +187,7 @@ public class MusicPlayer extends AppCompatActivity {
                               }
                       );
                   }
+
     File extDirectory = new File(Environment.getExternalStorageDirectory(), "Humposer");
 
 
