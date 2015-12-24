@@ -45,15 +45,16 @@ public class MusicPlayer extends AppCompatActivity {
        //     return fileList.indexOf(category);
        // }
    // }
-        public static TextView songNameText;
+
 
   @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_music_player);
-      final String id = getIntent().getExtras().getString("listItem");
-      songNameText= (TextView) findViewById(R.id.songNameText);
-      songNameText.setText(id);
+
+      final String name = getIntent().getExtras().getString("listItem");
+      final TextView songNameText = (TextView) findViewById(R.id.songNameText);
+      songNameText.setText(name);
 
         ImageButton renameButton = (ImageButton) findViewById(R.id.renameButton);
       File extDirectory = new File(Environment.getExternalStorageDirectory(), "Humposer");
@@ -71,7 +72,7 @@ public class MusicPlayer extends AppCompatActivity {
                             System.out.println(aFileList.getAbsoluteFile());
                             listViewValues.add(aFileList.getName());
                         }
-                        setTitle(id);
+                        setTitle("TADA");
 
 
                         final EditText input = new EditText(MusicPlayer.this);

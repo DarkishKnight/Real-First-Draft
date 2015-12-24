@@ -153,6 +153,11 @@ public class RecorderPage extends AppCompatActivity {
                                     @Override
                                     public void onClick(View v) {
                                         Intent e = new Intent(getBaseContext(), MainActivity.class);
+                                     //   Bundle bund = new Bundle();
+                                     //   String fileNames = saveToFileName;
+                                      //  bund.putString("Names of Files", fileNames);
+                                       // Intent l = new Intent(getBaseContext(), MusicPlayer.class);
+                                      //  l.putExtras(bund);
                                         startActivity(e);
                                     }
                                 }
