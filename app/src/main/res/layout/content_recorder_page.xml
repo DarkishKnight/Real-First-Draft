@@ -9,7 +9,7 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:showIn="@layout/activity_recorder_page"
     tools:context="com.liam.realfirstdraft.RecorderPage"
-    android:background="@drawable/background"
+    android:background="#ffffff"
     android:clickable="false">
 
     <ImageButton
@@ -18,11 +18,9 @@
         android:id="@+id/playButton"
         android:background="@drawable/play"
         android:onClick="resumeRecording"
-        android:layout_marginLeft="39dp"
-        android:layout_marginStart="39dp"
-        android:layout_alignTop="@+id/recordButton"
-        android:layout_toRightOf="@+id/backButton"
-        android:layout_toEndOf="@+id/backButton" />
+        android:layout_marginTop="56dp"
+        android:layout_below="@+id/recordButton"
+        android:layout_centerHorizontal="true" />
 
     <ImageButton
         android:layout_width="70dp"
@@ -39,10 +37,8 @@
         android:id="@+id/recordButton"
         android:background="@drawable/record"
         android:onClick="startRecording"
-        android:layout_marginLeft="27dp"
-        android:layout_marginStart="27dp"
-        android:layout_centerVertical="true"
-        android:layout_toRightOf="@+id/playButton"
-        android:layout_toEndOf="@+id/playButton" />
+        android:layout_below="@+id/backButton"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="102dp" />
 
 </RelativeLayout>

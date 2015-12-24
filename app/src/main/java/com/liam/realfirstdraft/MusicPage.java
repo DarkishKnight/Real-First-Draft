@@ -101,11 +101,11 @@ public class MusicPage extends AppCompatActivity {
         public void onItemClick(AdapterView parent, View v, int position, long id) {
             System.gc();
             Bundle b = new Bundle();
-            //File selectedFile = fileList[((int) id)];
-            listFile = String.valueOf(fileList[((int) id)]);
-            fileName = listFile.substring(listFile.lastIndexOf('\\'), listFile.indexOf(' '));
+            File selectedFile = fileList[((int) id)];
+            //listFile = String.valueOf(fileList[((int) id)]);
+           // fileName = listFile.substring(listFile.lastIndexOf('\\'), listFile.indexOf(' '));
            // String extractedName = listFile.substring(listFile.lastIndexOf('\\'), listFile.indexOf(' '));
-            //b.putString("listItem", String.valueOf(selectedFile));
+            b.putString("listItem", String.valueOf(selectedFile));
             b.putString("listItem", fileName);
             Intent g = new Intent(getBaseContext(), MusicPlayer.class);
             g.putExtras(b);

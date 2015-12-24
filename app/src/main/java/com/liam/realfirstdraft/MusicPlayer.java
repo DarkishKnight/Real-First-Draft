@@ -28,8 +28,8 @@ public class MusicPlayer extends AppCompatActivity {
 
     protected void renameFile() {
 
-        File oldFile = new File(songFile.getParent() + File.separator + saveToFileName);
-        songFile.renameTo(oldFile);
+        File newFile = new File(songFile.getParent() + File.separator + saveToFileName);
+        songFile.renameTo(newFile);
         // copy tempFile to saveToFileName
 
         File extDirectory = new File(Environment.getExternalStorageDirectory(), "Humposer");
