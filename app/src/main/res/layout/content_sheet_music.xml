@@ -20,7 +20,7 @@
         android:background="@drawable/back" />
 
     <ListView
-        style="@style/BabyBlue.BigBlue"
+
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/sheetList"

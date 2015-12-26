@@ -17,14 +17,14 @@ import java.io.IOException;
 
 
 public class MusicPlayer extends AppCompatActivity  {
-
     String saveToFileName;
     File songFile;
     MediaPlayer mediaPlayer;
     File newFile;
     int[] state;
     int maxStates;
-
+    File extDirectory = new File(Environment.getExternalStorageDirectory(), "Humposer");
+    public  TextView songNameText;
 
     protected void renameFile() {
 
@@ -45,9 +45,12 @@ public class MusicPlayer extends AppCompatActivity  {
        //     return fileList.indexOf(category);
        // }
    // }
+    //protected void saveFile() {
+
+                 //  File newFile = new File(songNameText.getParent()+File.separator+saveToFileName);
+               //  songNameText.renameTo(newFile);
 
 
-    public static TextView songNameText;
   @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -163,6 +166,11 @@ public class MusicPlayer extends AppCompatActivity  {
                                   @Override
                                   public void onClick(View v) {
                                       AlertDialog.Builder builder = new AlertDialog.Builder(MusicPlayer.this);
+                                       /* final ArrayList<String> listViewValues = new ArrayList<>();
+-                        for (File aFileList : fileList) {
+-                            System.out.println(aFileList.getAbsoluteFile());
+-                            listViewValues.add(aFileList.getName());
+-                        }*/
                                       builder.setTitle(id);
 
 
@@ -197,7 +205,7 @@ public class MusicPlayer extends AppCompatActivity  {
                       );
                   }
 
-    File extDirectory = new File(Environment.getExternalStorageDirectory(), "Humposer");
+
 
 
 
@@ -215,4 +223,23 @@ public class MusicPlayer extends AppCompatActivity  {
             mediaPlayer.stop();
     }
 }
+/*File file = new File(extDirectory + File.separator + id);
+-
+-// File (or directory) with new name
+-File file2 = new File(extDirectory + File.separator + String.valueOf(input));
+-
+-if (file2.exists())
+-        try {
+-        throw new IOException("file exists");
+-        } catch (IOException e) {
+-        e.printStackTrace();
+-        }
+-
+-// Rename file (or directory)
+-        boolean success = file.renameTo(file2);
+-
+-        if (!success) {
+-        // File was not successfully renamed
+-        }
+-        */
 
