@@ -26,22 +26,14 @@ public class RecorderPage extends AppCompatActivity {
     private MediaPlayer mediaPlayer;
     File tempFile;
     String saveToFileName;
+    File newFile;
 
     protected void saveFile() {
 
-        File newFile = new File(tempFile.getParent()+File.separator+saveToFileName);
+        newFile = new File(tempFile.getParent()+File.separator+saveToFileName);
         tempFile.renameTo(newFile);
 
-        ditchMediaPlayer();
-        try {
-            mediaPlayer=new MediaPlayer();
-            mediaPlayer.setDataSource(newFile.getAbsolutePath());
-            mediaPlayer.prepare();
-            mediaPlayer.start();
-        }
-        catch(IOException ioe) {
-            System.out.println(ioe.getMessage());
-        }
+
         // copy tempFile to saveToFileName
 
         File extDirectory = new File(Environment.getExternalStorageDirectory(),"Humposer");
@@ -132,10 +124,21 @@ public class RecorderPage extends AppCompatActivity {
                         if (finalState[0] >= finalMaxStates) finalState[0] = 0;
                         switch (finalState[0]++) {
                             case 0:
-                                playButton.setBackgroundResource(R.drawable.play);
+                                playButton.setBackgroundResource(R.drawable.pause);
+                                ditchMediaPlayer();
+                                try {
+                                    mediaPlayer=new MediaPlayer();
+                                    mediaPlayer.setDataSource(newFile.getAbsolutePath());
+                                    mediaPlayer.prepare();
+                                    mediaPlayer.start();
+                                }
+                                catch(IOException ioe) {
+                                    System.out.println(ioe.getMessage());
+                                }
                                 break;
                             case 1:
-                                playButton.setBackgroundResource(R.drawable.pause);
+                                playButton.setBackgroundResource(R.drawable.play);
+                                 pauseRecording();
                                 break;
                         }
                     }
@@ -201,8 +204,8 @@ public class RecorderPage extends AppCompatActivity {
             mediaRecorder.stop();
     }
     private void pauseRecording() {
-        if (mediaRecorder != null)
-            mediaRecorder.stop();
+        if (mediaPlayer != null)
+            mediaPlayer.stop();
     }
     private void playRecording() {
         if (mediaRecorder == null) {

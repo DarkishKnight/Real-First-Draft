@@ -3,7 +3,6 @@ package com.liam.realfirstdraft;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.media.Image;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Environment;
@@ -23,13 +22,9 @@ public class MusicPlayer extends AppCompatActivity  {
     File songFile;
     MediaPlayer mediaPlayer;
     File newFile;
+    int[] state;
+    int maxStates;
 
-
-
-    //protected void saveFile() {
-
-      //  File newFile = new File(songNameText.getParent()+File.separator+saveToFileName);
-      //  songNameText.renameTo(newFile);
 
     protected void renameFile() {
 
@@ -93,7 +88,9 @@ public class MusicPlayer extends AppCompatActivity  {
                       maker.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                           @Override
                           public void onClick(DialogInterface dialog, int which) {
-                              songFile.delete();
+                              songFile.getAbsoluteFile().delete();
+                              Intent x = new Intent(getBaseContext(), MusicPage.class);
+                              startActivity(x);
                           }
                       });
                           maker.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -109,51 +106,63 @@ public class MusicPlayer extends AppCompatActivity  {
               }
       );
 
-      ImageButton playButton = (ImageButton) findViewById(R.id.playButton);
+      //button
+
+      final ImageButton playButton = (ImageButton) findViewById(R.id.playButton);
+      state = new int[]{0};
+      maxStates = 2;
+
+      final int[] finalState = state;
+      final int finalMaxStates = maxStates;
       playButton.setOnClickListener(
               new ImageButton.OnClickListener() {
                   @Override
                   public void onClick(View v) {
-                      ditchMediaPlayer();
-                      if (songFile.exists())
-                      try {
-                          mediaPlayer = new MediaPlayer();
-                          mediaPlayer.setDataSource(songFile.getAbsolutePath());
-                          mediaPlayer.prepare();
-                          mediaPlayer.start();
-                      } catch (IOException ioe) {
-                          System.out.println(ioe.getMessage());
+
+                      if (finalState[0] >= finalMaxStates) finalState[0] = 0;
+                      switch (finalState[0]++) {
+                          case 0:
+                              playButton.setBackgroundResource(R.drawable.pause);
+                              ditchMediaPlayer();
+                              if (songFile.exists())
+                                  try {
+                                      mediaPlayer = new MediaPlayer();
+                                      mediaPlayer.setDataSource(songFile.getAbsolutePath());
+                                      mediaPlayer.prepare();
+                                      mediaPlayer.start();
+                                  } catch (IOException ioe) {
+                                      System.out.println(ioe.getMessage());
+                                  }
+
+                              else {
+                                  try {
+                                      mediaPlayer = new MediaPlayer();
+                                      mediaPlayer.setDataSource(newFile.getAbsolutePath());
+                                      mediaPlayer.prepare();
+                                      mediaPlayer.start();
+                                  } catch (IOException ioe) {
+                                      System.out.println(ioe.getMessage());
+                                  }
+                              }
+                              break;
+                          case 1:
+                              playButton.setBackgroundResource(R.drawable.play);
+                              pauseRecording();
+                              break;
                       }
-                      else{
-                          try {
-                              mediaPlayer = new MediaPlayer();
-                              mediaPlayer.setDataSource(newFile.getAbsolutePath());
-                              mediaPlayer.prepare();
-                              mediaPlayer.start();
-                          } catch (IOException ioe) {
-                              System.out.println(ioe.getMessage());
-                          }
-                      }
+
                   }
+
               });
 
 
 //Botton
                       ImageButton renameButton = (ImageButton) findViewById(R.id.renameButton);
-                      final File extDirectory = new File(Environment.getExternalStorageDirectory(), "Humposer");
-
-
-
                       renameButton.setOnClickListener(
                               new ImageButton.OnClickListener() {
                                   @Override
                                   public void onClick(View v) {
                                       AlertDialog.Builder builder = new AlertDialog.Builder(MusicPlayer.this);
-                       /* final ArrayList<String> listViewValues = new ArrayList<>();
-                        for (File aFileList : fileList) {
-                            System.out.println(aFileList.getAbsoluteFile());
-                            listViewValues.add(aFileList.getName());
-                        }*/
                                       builder.setTitle(id);
 
 
@@ -201,24 +210,9 @@ public class MusicPlayer extends AppCompatActivity  {
             }
         }
     }
+    private void pauseRecording() {
+        if (mediaPlayer != null)
+            mediaPlayer.stop();
+    }
 }
 
-/*File file = new File(extDirectory + File.separator + id);
-
-// File (or directory) with new name
-File file2 = new File(extDirectory + File.separator + String.valueOf(input));
-
-if (file2.exists())
-        try {
-        throw new IOException("file exists");
-        } catch (IOException e) {
-        e.printStackTrace();
-        }
-
-// Rename file (or directory)
-        boolean success = file.renameTo(file2);
-
-        if (!success) {
-        // File was not successfully renamed
-        }
-        */

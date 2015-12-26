@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="BabyBlue">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">#efefef</item>
+        <item name="android:background">#cb006696</item>
+    </style>
+    // BabyBlue.Bigblue means that i am inheriting from the BabyBlue, or whichever name comes before the period,
+    and then naming the thing, which is after the period.
+    <style name="BabyBlue.BigBlue">
+        <item name="android:textSize">30sp</item>
+    </style>
+</resources>

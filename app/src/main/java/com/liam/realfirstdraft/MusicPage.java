@@ -2,8 +2,6 @@ package com.liam.realfirstdraft;
 
 
 import android.content.Intent;
-import android.database.Cursor;
-import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
@@ -20,13 +18,10 @@ import java.util.ArrayList;
 public class MusicPage extends AppCompatActivity {
     ListView musiclist;
     File[] fileList;
-    ArrayList listViewValues;
     String listFile;
-    String fileName;
-    int v;
 
 
-    protected void renameFile() {
+   /* protected void renameFile() {
 
       File extDirectory = new File(Environment.getExternalStorageDirectory(), "Humposer");
       fileList = extDirectory.listFiles();
@@ -34,7 +29,7 @@ public class MusicPage extends AppCompatActivity {
           System.out.println(fileList[i].getAbsoluteFile());
       }
 
-  }
+  }*/
 
 
 
