@@ -14,7 +14,7 @@
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:id="@+id/centerButton"
-        android:background="@drawable/button"
+        android:background="@drawable/sheetmusic"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
         android:layout_alignLeft="@+id/topButton"
@@ -23,10 +23,10 @@
         android:onClick="centerButtonClicked" />
 
     <ImageButton
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="90dp"
+        android:layout_height="90dp"
         android:id="@+id/topButton"
-        android:background="@drawable/button"
+        android:background="@drawable/recorderpage"
         android:layout_centerHorizontal="true"
         android:layout_alignBottom="@+id/centerButton"
         android:layout_marginBottom="124dp"
@@ -38,7 +38,7 @@
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:id="@+id/buttomButton"
-        android:background="@drawable/button"
+        android:background="@drawable/musiclist"
         android:layout_centerHorizontal="true"
         android:layout_alignTop="@+id/centerButton"
         android:layout_marginTop="124dp"
