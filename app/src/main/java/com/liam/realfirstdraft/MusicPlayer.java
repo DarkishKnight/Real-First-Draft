@@ -125,9 +125,9 @@ public class MusicPlayer extends AppCompatActivity  {
                       if (finalState[0] >= finalMaxStates) finalState[0] = 0;
                       switch (finalState[0]++) {
                           case 0:
-                              playButton.setBackgroundResource(R.drawable.pause);
+                              playButton.setBackgroundResource(R.drawable.pauseicon);
                               ditchMediaPlayer();
-                              if (songFile.exists())
+                              if (songFile.exists()) {
                                   try {
                                       mediaPlayer = new MediaPlayer();
                                       mediaPlayer.setDataSource(songFile.getAbsolutePath());
@@ -136,7 +136,7 @@ public class MusicPlayer extends AppCompatActivity  {
                                   } catch (IOException ioe) {
                                       System.out.println(ioe.getMessage());
                                   }
-
+                              }
                               else {
                                   try {
                                       mediaPlayer = new MediaPlayer();
@@ -149,11 +149,11 @@ public class MusicPlayer extends AppCompatActivity  {
                               }
                               break;
                           case 1:
-                              playButton.setBackgroundResource(R.drawable.play);
                               pauseRecording();
+                              playButton.setBackgroundResource(R.drawable.playback);
                               break;
-                      }
 
+                      }
                   }
 
               });
