@@ -5,6 +5,4 @@
     android:weightSum="1"
     android:background="@drawable/splashscreen"
     android:id="@+id/imageView">
-
-
 </RelativeLayout>

@@ -1,8 +1,12 @@
 package com.liam.realfirstdraft;
 
+import android.animation.ArgbEvaluator;
+import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.ColorRes;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
@@ -20,7 +24,6 @@ public class Splash extends Activity{
 
         final RelativeLayout rl = (RelativeLayout) findViewById(R.id.imageView);
         final Animation an = AnimationUtils.loadAnimation(getBaseContext(), R.anim.glow);
-        final Animation an2 = AnimationUtils.loadAnimation(getBaseContext(), R.anim.abc_fade_out);
 
         rl.startAnimation(an);
         an.setAnimationListener(new Animation.AnimationListener() {
@@ -31,7 +34,6 @@ public class Splash extends Activity{
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                rl.startAnimation(an2);
                 finish();
                 Intent a = new Intent(getBaseContext(), MainActivity.class);
                 startActivity(a);
