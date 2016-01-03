@@ -3,30 +3,35 @@ package com.liam.realfirstdraft;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.Environment;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.io.IOException;
 
 
 
 public class RecorderPage extends AppCompatActivity {
 
     private MediaRecorder mediaRecorder;
-    private MediaPlayer mediaPlayer;
+   // private MediaPlayer mediaPlayer;
     File tempFile;
     String saveToFileName;
     File newFile;
+    AnimationDrawable glowAnimation;
 
     protected void saveFile() {
 
@@ -50,8 +55,10 @@ public class RecorderPage extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recorder_page);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+
+        RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.recorderLayout);
+        glowAnimation = (AnimationDrawable) relativeLayout.getBackground();
+
 
         final EditText beginningText = new EditText(this);
 
@@ -73,6 +80,7 @@ public class RecorderPage extends AppCompatActivity {
 
                             case 0: // begin recording
                                 recordButton.setBackgroundResource(R.drawable.stop);
+                                glowAnimation.start();
                                 try {
                                     beginRecording();
                                 } catch (Exception e) {
@@ -82,6 +90,8 @@ public class RecorderPage extends AppCompatActivity {
                             case 1: // stop recording
                                 recordButton.setBackgroundResource(R.drawable.record);
                                 stopRecording();
+                                glowAnimation.stop();
+
                                 AlertDialog.Builder builder = new AlertDialog.Builder(RecorderPage.this);
                                 builder.setTitle("Song Name");
 
@@ -112,7 +122,7 @@ public class RecorderPage extends AppCompatActivity {
                 }
 
         );
-        final ImageButton playButton = (ImageButton) findViewById(R.id.playButton);
+        /*final ImageButton playButton = (ImageButton) findViewById(R.id.playButton);
         state = new int[]{0};
         maxStates = 2;
 
@@ -145,28 +155,40 @@ public class RecorderPage extends AppCompatActivity {
                 }
 
         );
-
-
+        */
 
 
         final ImageButton backButton = (ImageButton) findViewById(R.id.backButton);
 
-                        backButton.setOnClickListener(
-                                new ImageButton.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        Intent e = new Intent(getBaseContext(), MainActivity.class);
-                                     //   Bundle bund = new Bundle();
-                                     //   String fileNames = saveToFileName;
-                                      //  bund.putString("Names of Files", fileNames);
-                                       // Intent l = new Intent(getBaseContext(), MusicPlayer.class);
-                                      //  l.putExtras(bund);
-                                        startActivity(e);
-                                    }
-                                }
-                        );
-
+        backButton.setOnClickListener(
+                new ImageButton.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent e = new Intent(getBaseContext(), MainActivity.class);
+                        //   Bundle bund = new Bundle();
+                        //   String fileNames = saveToFileName;
+                        //  bund.putString("Names of Files", fileNames);
+                        // Intent l = new Intent(getBaseContext(), MusicPlayer.class);
+                        //  l.putExtras(bund);
+                        startActivity(e);
                     }
+                }
+        );
+
+
+        ImageButton musicbutton = (ImageButton) findViewById(R.id.toMusicPage);
+
+        musicbutton.setOnClickListener(
+                new ImageButton.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent o = new Intent(getBaseContext(), MusicPage.class);
+                        startActivity(o);
+                    }
+                }
+        );
+    }
+
 
 
 
@@ -203,23 +225,22 @@ public class RecorderPage extends AppCompatActivity {
         if (mediaRecorder != null)
             mediaRecorder.stop();
     }
-    private void pauseRecording() {
-        if (mediaPlayer != null)
-            mediaPlayer.stop();
-    }
-    private void playRecording() {
+
+   /* private void playRecording() {
         if (mediaRecorder == null) {
             assert mediaRecorder != null;
             mediaRecorder.start();
         }
     }
+    */
     private void ditchMediaRecorder() {
         if (mediaRecorder != null)
             mediaRecorder.release();
 
     }
 
-    private void ditchMediaPlayer() {
+
+  /*  private void ditchMediaPlayer() {
         if (mediaPlayer != null) {
             try {
                 mediaPlayer.release();
@@ -228,6 +249,7 @@ public class RecorderPage extends AppCompatActivity {
             }
         }
     }
+
 
     public File getTempFile() {
         return tempFile;
@@ -252,4 +274,25 @@ public class RecorderPage extends AppCompatActivity {
     public void setMediaRecorder(MediaRecorder mediaRecorder) {
         this.mediaRecorder = mediaRecorder;
     }
+    */
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unbindDrawables(findViewById(R.id.recorderLayout));
+        System.gc();
+    }
+
+    private void unbindDrawables(View view) {
+        if (view.getBackground() != null) {
+            view.getBackground().setCallback(null);
+        }
+        if (view instanceof ViewGroup) {
+            for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++) {
+                unbindDrawables(((ViewGroup) view).getChildAt(i));
+            }
+            ((ViewGroup) view).removeAllViews();
+        }
+    }
+
 }

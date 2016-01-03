@@ -77,6 +77,21 @@ public class MusicPlayer extends AppCompatActivity  {
 
       );
 
+      ImageButton musicPage = (ImageButton) findViewById(R.id.torecorderpage);
+
+      musicPage.setOnClickListener(
+              new ImageButton.OnClickListener()
+
+              {
+                  @Override
+                  public void onClick(View v) {
+                      Intent q = new Intent(getBaseContext(), RecorderPage.class);
+                      startActivity(q);
+                  }
+              }
+
+      );
+
 
 //Button
 

@@ -12,9 +12,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
-/**
- * Created by Liam on 11/8/2015.
- */
+
 public class Splash extends Activity{
 
     @Override

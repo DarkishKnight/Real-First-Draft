@@ -4,8 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
@@ -19,9 +18,9 @@ public class MainActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        RelativeLayout rl = (RelativeLayout) findViewById(R.id.mainLayout);
-        Animation an2 = AnimationUtils.loadAnimation(getBaseContext(), R.anim.unglow);
-        rl.startAnimation(an2);
+      //  RelativeLayout rl = (RelativeLayout) findViewById(R.id.mainLayout);
+       // Animation an2 = AnimationUtils.loadAnimation(getBaseContext(), R.anim.unglow);
+       // rl.startAnimation(an2);
 
        ImageButton bottomButton = (ImageButton) findViewById(R.id.buttomButton);
 
@@ -59,33 +58,23 @@ public class MainActivity extends AppCompatActivity{
 
     }
 
-
-
-
-
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
+    protected void onDestroy() {
+        super.onDestroy();
+        unbindDrawables(findViewById(R.id.mainLayout));
+        System.gc();
     }
 
-
-
-
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+    private void unbindDrawables(View view) {
+        if (view.getBackground() != null) {
+            view.getBackground().setCallback(null);
         }
-
-        return super.onOptionsItemSelected(item);
+        if (view instanceof ViewGroup) {
+            for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++) {
+                unbindDrawables(((ViewGroup) view).getChildAt(i));
+            }
+            ((ViewGroup) view).removeAllViews();
+        }
     }
+
 }
