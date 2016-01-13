@@ -49,6 +49,10 @@
             android:name=".MusicPlayer"
             android:label="@string/title_activity_music_player"
             android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
+            android:name=".AudioRecordPages"
+            android:label="@string/title_activity_audio_recorder_page"
+            android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 
 </manifest>

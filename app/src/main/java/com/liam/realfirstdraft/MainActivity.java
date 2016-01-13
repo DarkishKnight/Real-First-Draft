@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity{
         topButton.setOnClickListener(
                 new ImageButton.OnClickListener(){
                     public void onClick(View v) {
-                        Intent c = new Intent(getBaseContext(), RecorderPage.class);
+                        Intent c = new Intent(getBaseContext(), AudioRecordPages.class);
                         startActivity(c);
                     }
                 }

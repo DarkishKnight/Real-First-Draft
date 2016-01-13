@@ -70,7 +70,7 @@ public class MusicPlayer extends AppCompatActivity  {
               {
                   @Override
                   public void onClick(View v) {
-                      Intent z = new Intent(getBaseContext(), MusicPage.class);
+                      Intent z = new Intent(getBaseContext(), MainActivity.class);
                       startActivity(z);
                   }
               }
@@ -85,7 +85,7 @@ public class MusicPlayer extends AppCompatActivity  {
               {
                   @Override
                   public void onClick(View v) {
-                      Intent q = new Intent(getBaseContext(), RecorderPage.class);
+                      Intent q = new Intent(getBaseContext(), AudioRecordPages.class);
                       startActivity(q);
                   }
               }

@@ -16,16 +16,15 @@
         android:layout_height="100dp"
         android:id="@+id/centerButton"
         android:background="@drawable/sheetmusic"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
-        android:layout_alignLeft="@+id/topButton"
-        android:layout_alignStart="@+id/topButton"
         android:contentDescription="@string/butttonss"
-        android:onClick="centerButtonClicked" />
+        android:onClick="centerButtonClicked"
+        android:layout_centerVertical="true"
+        android:layout_alignLeft="@+id/topButton"
+        android:layout_alignStart="@+id/topButton" />
 
     <ImageButton
-        android:layout_width="90dp"
-        android:layout_height="90dp"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:id="@+id/topButton"
         android:background="@drawable/recorderpage"
         android:layout_centerHorizontal="true"
