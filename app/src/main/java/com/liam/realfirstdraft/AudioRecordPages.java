@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.AnimationDrawable;
 import android.media.AudioFormat;
-import android.media.AudioManager;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.os.Bundle;
@@ -23,18 +22,13 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+
 
 
 public class AudioRecordPages extends AppCompatActivity {
 
-    private MediaRecorder mediaRecorder1;
-   // private MediaPlayer mediaPlayer;
-    File tempFile1;
-    String saveToFileName1;
-    File newFile1;
+    String saveToNewFileName;
+    File saveToNewFile;
     AnimationDrawable glowAnimation1;
     private static final int RECORDER_BPP = 16;
     private static final String AUDIO_RECORDER_FILE_EXT_WAV = ".wav";
@@ -53,21 +47,15 @@ public class AudioRecordPages extends AppCompatActivity {
 
     protected void saveFile() {
 
-        newFile1 = new File(tempFile1.getParent()+File.separator+saveToFileName1);
-        tempFile1.renameTo(newFile1);
-        byte data[] = new byte[bufferSize];
-        String filename = getTempFilename();
-        FileOutputStream os = null;
-
-
-        // copy tempFile to saveToFileName
-
         File extDirectory = new File(Environment.getExternalStorageDirectory(),"Humposer");
+        saveToNewFile = new File(extDirectory.getAbsolutePath()+File.separator+saveToNewFileName);
+        copyWaveFile(getTempFilename(), saveToNewFile.getAbsolutePath());
+
         File[] fileList = extDirectory.listFiles();
         for (File aFileList : fileList) {
             System.out.println(aFileList.getAbsoluteFile());
         }
-
+        deleteTempFile();
     }
 
 
@@ -78,11 +66,11 @@ public class AudioRecordPages extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.content_audio_recorder_page);
 
-        RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.recorderLayout);
+        RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.recorderLayout1);
         glowAnimation1 = (AnimationDrawable) relativeLayout.getBackground();
 
         bufferSize = AudioRecord.getMinBufferSize(44100,
-                AudioFormat.CHANNEL_CONFIGURATION_MONO,
+                AudioFormat.CHANNEL_IN_STEREO,
                 AudioFormat.ENCODING_PCM_16BIT);
 
         final EditText beginningText = new EditText(this);
@@ -129,7 +117,7 @@ public class AudioRecordPages extends AppCompatActivity {
                                 builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        saveToFileName1 = input.getText().toString();
+                                        saveToNewFileName = input.getText().toString();
                                         saveFile();
                                     }
                                 });
@@ -147,40 +135,6 @@ public class AudioRecordPages extends AppCompatActivity {
                 }
 
         );
-        /*final ImageButton playButton = (ImageButton) findViewById(R.id.playButton);
-        state = new int[]{0};
-        maxStates = 2;
-
-        final int[] finalState = state;
-        final int finalMaxStates = maxStates;
-        playButton.setOnClickListener(
-                new ImageButton.OnClickListener() {
-                    public void onClick (View v){
-                        if (finalState[0] >= finalMaxStates) finalState[0] = 0;
-                        switch (finalState[0]++) {
-                            case 0:
-                                playButton.setBackgroundResource(R.drawable.pause);
-                                ditchMediaPlayer();
-                                try {
-                                    mediaPlayer=new MediaPlayer();
-                                    mediaPlayer.setDataSource(newFile.getAbsolutePath());
-                                    mediaPlayer.prepare();
-                                    mediaPlayer.start();
-                                }
-                                catch(IOException ioe) {
-                                    System.out.println(ioe.getMessage());
-                                }
-                                break;
-                            case 1:
-                                playButton.setBackgroundResource(R.drawable.play);
-                                 pauseRecording();
-                                break;
-                        }
-                    }
-                }
-
-        );
-        */
 
 
         final ImageButton backButton = (ImageButton) findViewById(R.id.backButton3);
@@ -212,21 +166,21 @@ public class AudioRecordPages extends AppCompatActivity {
 
     private void startRecording(){
         recorder = new AudioRecord(MediaRecorder.AudioSource.MIC,
-                RECORDER_SAMPLERATE, RECORDER_CHANNELS,RECORDER_AUDIO_ENCODING, bufferSize);
-        String state = Environment.getExternalStorageState();
-        if (Environment.MEDIA_MOUNTED.equals(state)) {
-            System.out.println("External storage is writable");
-        }
-        else {
-            System.out.println("External storage is NOT writable");
-        }
-        File audioDir = new File(Environment.getExternalStorageDirectory(),"Humposer");
+                44100, AudioFormat.CHANNEL_IN_STEREO, AudioFormat.ENCODING_PCM_16BIT, bufferSize);
+//        String state = Environment.getExternalStorageState();
+//        if (Environment.MEDIA_MOUNTED.equals(state)) {
+//            System.out.println("External storage is writable");
+//        }
+//        else {
+//            System.out.println("External storage is NOT writable");
+//        }
+//        File audioDir = new File(Environment.getExternalStorageDirectory(),"Humposer");
 //        File audioDir = new File("/data/com.liam/Humposer");
-        if (!audioDir.exists())
-            audioDir.mkdir();
+//        if (!audioDir.exists())
+//            audioDir.mkdir();
 
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        tempFile1 = new File(audioDir, "tempAudioFile_"+timeStamp+".wav");
+//        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+//        tempFile1 = new File(audioDir, "tempAudioFile_"+timeStamp+".wav");
 
         int i = recorder.getState();
         if(i==1)
@@ -238,42 +192,13 @@ public class AudioRecordPages extends AppCompatActivity {
 
             @Override
             public void run() {
-                saveFile();
+                writeAudioDataToFile();
             }
         },"AudioRecorder Thread");
 
         recordingThread.start();
     }
 
-    /*private void beginRecording() throws Exception {
-        ditchMediaRecorder();
-
-        String state = Environment.getExternalStorageState();
-        if (Environment.MEDIA_MOUNTED.equals(state)) {
-            System.out.println("External storage is writable");
-        }
-        else {
-            System.out.println("External storage is NOT writable");
-        }
-
-        File audioDir = new File(Environment.getExternalStorageDirectory(),"Humposer");
-//        File audioDir = new File("/data/com.liam/Humposer");
-        if (!audioDir.exists())
-            audioDir.mkdir();
-
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        tempFile1 = new File(audioDir, "tempAudioFile_"+timeStamp+".3gpp");
-
-        mediaRecorder1 = new MediaRecorder();
-        mediaRecorder1.setAudioSource(MediaRecorder.AudioSource.MIC);
-        mediaRecorder1.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-        mediaRecorder1.setAudioEncoder(MediaRecorder.AudioEncoder.AAC_ELD);
-        mediaRecorder1.setOutputFile(tempFile1.toString());
-        mediaRecorder1.prepare();
-        mediaRecorder1.start();
-                    }
-
-*/
     private void stopRecording(){
         if(null != recorder){
             isRecording = false;
@@ -281,13 +206,49 @@ public class AudioRecordPages extends AppCompatActivity {
             int i = recorder.getState();
             if(i==1)
                 recorder.stop();
+
             recorder.release();
 
             recorder = null;
             recordingThread = null;
         }
-        copyWaveFile(getTempFilename(),getFilename());
-        deleteTempFile();
+//        copyWaveFile(getTempFilename(),getFilename());
+//        deleteTempFile();
+    }
+
+    private void writeAudioDataToFile(){
+        byte data[] = new byte[bufferSize];
+        String filename = getTempFilename();
+        FileOutputStream os = null;
+
+        try {
+            os = new FileOutputStream(filename);
+        } catch (FileNotFoundException e) {
+// TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        int read = 0;
+
+        if(null != os){
+            while(isRecording){
+                read = recorder.read(data, 0, bufferSize);
+
+                if(AudioRecord.ERROR_INVALID_OPERATION != read){
+                    try {
+                        os.write(data);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            try {
+                os.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private void deleteTempFile() {
@@ -297,8 +258,8 @@ public class AudioRecordPages extends AppCompatActivity {
     }
 
     private void copyWaveFile(String inFilename,String outFilename){
-        FileInputStream in = null;
-        FileOutputStream out = null;
+        FileInputStream in;
+        FileOutputStream out;
         long totalAudioLen = 0;
         long totalDataLen = totalAudioLen + 36;
         long longSampleRate = RECORDER_SAMPLERATE;
@@ -322,8 +283,6 @@ public class AudioRecordPages extends AppCompatActivity {
 
             in.close();
             out.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -384,41 +343,7 @@ public class AudioRecordPages extends AppCompatActivity {
     }
 
 
-  /*  private void ditchMediaPlayer() {
-        if (mediaPlayer != null) {
-            try {
-                mediaPlayer.release();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
 
-
-    public File getTempFile() {
-        return tempFile;
-    }
-
-    public void setTempFile(File tempFile) {
-        this.tempFile = tempFile;
-    }
-
-    public String getSaveToFileName() {
-        return saveToFileName;
-    }
-
-    public void setSaveToFileName(String saveToFileName) {
-        this.saveToFileName = saveToFileName;
-    }
-
-    public MediaRecorder getMediaRecorder() {
-        return mediaRecorder;
-    }
-
-    public void setMediaRecorder(MediaRecorder mediaRecorder) {
-        this.mediaRecorder = mediaRecorder;
-    }
-    */
 
     private String getFilename(){
 
@@ -434,13 +359,21 @@ public class AudioRecordPages extends AppCompatActivity {
 
     private String getTempFilename(){
         File audioDir = new File(Environment.getExternalStorageDirectory(),"Humposer");
-//        File audioDir = new File("/data/com.liam/Humposer");
         if (!audioDir.exists())
             audioDir.mkdir();
 
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        tempFile1 = new File(audioDir, "tempAudioFile_"+timeStamp+".wav");
+        File tempFile = new File(Environment.getExternalStorageDirectory(),AUDIO_RECORDER_TEMP_FILE);
+
+        if(tempFile.exists())
+            tempFile.delete();
+
         return (audioDir.getAbsolutePath() + "/" + AUDIO_RECORDER_TEMP_FILE);
+
+//        File audioDir = new File("/data/com.liam/Humposer");
+//        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+//        tempFile1 = new File(audioDir, "tempAudioFile_"+timeStamp+".wav");
+
+//        return (audioDir.getAbsolutePath() + "/" + AUDIO_RECORDER_TEMP_FILE);
     }
 
     @Override
