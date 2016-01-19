@@ -3,20 +3,16 @@ package com.liam.realfirstdraft;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.media.MediaRecorder;
 import android.os.Environment;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -122,40 +118,7 @@ public class RecorderPage extends AppCompatActivity {
                 }
 
         );
-        /*final ImageButton playButton = (ImageButton) findViewById(R.id.playButton);
-        state = new int[]{0};
-        maxStates = 2;
 
-        final int[] finalState = state;
-        final int finalMaxStates = maxStates;
-        playButton.setOnClickListener(
-                new ImageButton.OnClickListener() {
-                    public void onClick (View v){
-                        if (finalState[0] >= finalMaxStates) finalState[0] = 0;
-                        switch (finalState[0]++) {
-                            case 0:
-                                playButton.setBackgroundResource(R.drawable.pause);
-                                ditchMediaPlayer();
-                                try {
-                                    mediaPlayer=new MediaPlayer();
-                                    mediaPlayer.setDataSource(newFile.getAbsolutePath());
-                                    mediaPlayer.prepare();
-                                    mediaPlayer.start();
-                                }
-                                catch(IOException ioe) {
-                                    System.out.println(ioe.getMessage());
-                                }
-                                break;
-                            case 1:
-                                playButton.setBackgroundResource(R.drawable.play);
-                                 pauseRecording();
-                                break;
-                        }
-                    }
-                }
-
-        );
-        */
 
 
         final ImageButton backButton = (ImageButton) findViewById(R.id.backButton);
@@ -165,11 +128,6 @@ public class RecorderPage extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         Intent e = new Intent(getBaseContext(), MainActivity.class);
-                        //   Bundle bund = new Bundle();
-                        //   String fileNames = saveToFileName;
-                        //  bund.putString("Names of Files", fileNames);
-                        // Intent l = new Intent(getBaseContext(), MusicPlayer.class);
-                        //  l.putExtras(bund);
                         startActivity(e);
                     }
                 }
@@ -204,7 +162,6 @@ public class RecorderPage extends AppCompatActivity {
         }
 
         File audioDir = new File(Environment.getExternalStorageDirectory(),"Humposer");
-//        File audioDir = new File("/data/com.liam/Humposer");
         if (!audioDir.exists())
             audioDir.mkdir();
 
@@ -226,55 +183,11 @@ public class RecorderPage extends AppCompatActivity {
             mediaRecorder.stop();
     }
 
-   /* private void playRecording() {
-        if (mediaRecorder == null) {
-            assert mediaRecorder != null;
-            mediaRecorder.start();
-        }
-    }
-    */
     private void ditchMediaRecorder() {
         if (mediaRecorder != null)
             mediaRecorder.release();
 
     }
-
-
-  /*  private void ditchMediaPlayer() {
-        if (mediaPlayer != null) {
-            try {
-                mediaPlayer.release();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-
-    public File getTempFile() {
-        return tempFile;
-    }
-
-    public void setTempFile(File tempFile) {
-        this.tempFile = tempFile;
-    }
-
-    public String getSaveToFileName() {
-        return saveToFileName;
-    }
-
-    public void setSaveToFileName(String saveToFileName) {
-        this.saveToFileName = saveToFileName;
-    }
-
-    public MediaRecorder getMediaRecorder() {
-        return mediaRecorder;
-    }
-
-    public void setMediaRecorder(MediaRecorder mediaRecorder) {
-        this.mediaRecorder = mediaRecorder;
-    }
-    */
 
     @Override
     protected void onDestroy() {

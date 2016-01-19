@@ -21,18 +21,6 @@ public class MusicPage extends AppCompatActivity {
     String listFile;
 
 
-   /* protected void renameFile() {
-
-      File extDirectory = new File(Environment.getExternalStorageDirectory(), "Humposer");
-      fileList = extDirectory.listFiles();
-      for (int i = 0; i < fileList.length; i++) {
-          System.out.println(fileList[i].getAbsoluteFile());
-      }
-
-  }*/
-
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,7 +46,6 @@ public class MusicPage extends AppCompatActivity {
 
     private void init_phone_music_grid() {
         System.gc();
-       // String fileName =  listFile.substring(listFile.lastIndexOf('\\'), listFile.indexOf(' '));
         musiclist = (ListView) findViewById(R.id.listView);
 
 
@@ -79,7 +66,6 @@ public class MusicPage extends AppCompatActivity {
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
                 R.layout.custom_textview,
-                //android.R.layout.simple_list_item_2, android.R.id.text1,
                 listViewValues.toArray(new String[listViewValues.size()]));
         musiclist.setAdapter(adapter);
 
@@ -98,12 +84,7 @@ public class MusicPage extends AppCompatActivity {
             Bundle b = new Bundle();
             File selectedFile = fileList[((int) id)];
             listFile = selectedFile.getName();
-            //listFile = String.valueOf(fileList[((int) id)]);
-           // fileName = listFile.substring(listFile.lastIndexOf('\\'), listFile.indexOf(' '));
-           // String extractedName = listFile.substring(listFile.lastIndexOf('\\'), listFile.indexOf(' '));
-          //  b.putString("listItem", String.valueOf(selectedFile));
             b.putString("listItem", listFile);
-            //b.putString("listItem", fileName);
             Intent g = new Intent(getBaseContext(), MusicPlayer.class);
             g.putExtras(b);
             startActivity(g);

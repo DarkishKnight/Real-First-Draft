@@ -31,12 +31,12 @@ public class AudioRecordPages extends AppCompatActivity {
     File saveToNewFile;
     AnimationDrawable glowAnimation1;
     private static final int RECORDER_BPP = 16;
-    private static final String AUDIO_RECORDER_FILE_EXT_WAV = ".wav";
-    private static final String AUDIO_RECORDER_FOLDER = "Humposer";
+//    private static final String AUDIO_RECORDER_FILE_EXT_WAV = ".wav";
+//    private static final String AUDIO_RECORDER_FOLDER = "Humposer";
     private static final String AUDIO_RECORDER_TEMP_FILE = "record_temp.raw";
     private static final int RECORDER_SAMPLERATE = 44100;
-    private static final int RECORDER_CHANNELS = AudioFormat.CHANNEL_IN_STEREO;
-    private static final int RECORDER_AUDIO_ENCODING = AudioFormat.ENCODING_PCM_16BIT;
+//    private static final int RECORDER_CHANNELS = AudioFormat.CHANNEL_IN_STEREO;
+//    private static final int RECORDER_AUDIO_ENCODING = AudioFormat.ENCODING_PCM_16BIT;
 
     private AudioRecord recorder = null;
     private int bufferSize = 0;
@@ -228,7 +228,7 @@ public class AudioRecordPages extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        int read = 0;
+        int read;
 
         if(null != os){
             while(isRecording){
@@ -345,17 +345,17 @@ public class AudioRecordPages extends AppCompatActivity {
 
 
 
-    private String getFilename(){
-
-        String filepath = Environment.getExternalStorageDirectory().getPath();
-        File file = new File(filepath,AUDIO_RECORDER_FOLDER);
-
-        if(!file.exists()){
-            file.mkdirs();
-        }
-
-        return (file.getAbsolutePath() + "/" + System.currentTimeMillis() + AUDIO_RECORDER_FILE_EXT_WAV);
-    }
+//    private String getFilename(){
+//
+//        String filepath = Environment.getExternalStorageDirectory().getPath();
+//        File file = new File(filepath,AUDIO_RECORDER_FOLDER);
+//
+//        if(!file.exists()){
+//            file.mkdirs();
+//        }
+//
+//        return (file.getAbsolutePath() + "/" + System.currentTimeMillis() + AUDIO_RECORDER_FILE_EXT_WAV);
+//    }
 
     private String getTempFilename(){
         File audioDir = new File(Environment.getExternalStorageDirectory(),"Humposer");
