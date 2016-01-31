@@ -70,7 +70,7 @@ public class AudioRecordPages extends AppCompatActivity {
         glowAnimation1 = (AnimationDrawable) relativeLayout.getBackground();
 
         bufferSize = AudioRecord.getMinBufferSize(44100,
-                AudioFormat.CHANNEL_IN_STEREO,
+                AudioFormat.CHANNEL_IN_MONO,
                 AudioFormat.ENCODING_PCM_16BIT);
 
         final EditText beginningText = new EditText(this);
@@ -166,7 +166,7 @@ public class AudioRecordPages extends AppCompatActivity {
 
     private void startRecording(){
         recorder = new AudioRecord(MediaRecorder.AudioSource.MIC,
-                44100, AudioFormat.CHANNEL_IN_STEREO, AudioFormat.ENCODING_PCM_16BIT, bufferSize);
+                44100, AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT, bufferSize);
 //        String state = Environment.getExternalStorageState();
 //        if (Environment.MEDIA_MOUNTED.equals(state)) {
 //            System.out.println("External storage is writable");

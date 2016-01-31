@@ -1,30 +1,57 @@
 package com.liam.realfirstdraft;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.media.AudioFormat;
+import android.media.AudioManager;
+import android.media.AudioTrack;
+import android.media.MediaCodecInfo;
 import android.media.MediaPlayer;
+import android.media.MediaRecorder;
+import android.net.rtp.AudioStream;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
 import android.view.View;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.Spinner;
 import android.widget.TextView;
+import android.media.AudioFormat;
+
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.ref.SoftReference;
+import java.lang.reflect.Array;
+import java.nio.ByteBuffer;
 
 
 public class MusicPlayer extends AppCompatActivity  {
-    String saveToFileName;
-    File songFile;
-    MediaPlayer mediaPlayer;
-    File newFile;
-    int[] state;
-    int maxStates;
-    File extDirectory = new File(Environment.getExternalStorageDirectory(), "Humposer");
-    public  TextView songNameText;
+    private String saveToFileName;
+    private Spinner staticSpinner;
+    private Spinner dynamicSpinner;
+    private File songFile;
+    private MediaPlayer mediaPlayer;
+    private File newFile;
+    private int[] state;
+    private int maxStates;
+    private File extDirectory = new File(Environment.getExternalStorageDirectory(), "Humposer");
+    private Complex[] complexData;
+    private  TextView songNameText;
+
 
     protected void renameFile() {
 
@@ -55,6 +82,8 @@ public class MusicPlayer extends AppCompatActivity  {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_music_player);
+//        activityList();
+
 
       final String id = getIntent().getExtras().getString("listItem");
       songNameText= (TextView) findViewById(R.id.songNameText);
@@ -179,8 +208,9 @@ public class MusicPlayer extends AppCompatActivity  {
                       renameButton.setOnClickListener(
                               new ImageButton.OnClickListener() {
                                   @Override
-                                  public void onClick(View v) {
+                                  public void onClick(final View v) {
                                       AlertDialog.Builder builder = new AlertDialog.Builder(MusicPlayer.this);
+
                                        /* final ArrayList<String> listViewValues = new ArrayList<>();
 -                        for (File aFileList : fileList) {
 -                            System.out.println(aFileList.getAbsoluteFile());
@@ -193,7 +223,13 @@ public class MusicPlayer extends AppCompatActivity  {
 // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
                                       input.setInputType(InputType.TYPE_CLASS_TEXT);
                                       builder.setView(input);
-
+                                      input.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                                          public void onFocusChange(View arg0, boolean arg1) {
+                                              InputMethodManager inputMgr = (InputMethodManager) v.getContext().
+                                                      getSystemService(Context.INPUT_METHOD_SERVICE);
+                                              inputMgr.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+                                          }
+                                      });
 // Set up the buttons
                                       builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                           @Override
@@ -202,6 +238,14 @@ public class MusicPlayer extends AppCompatActivity  {
                                               renameFile();
                                               // File (or directory) with old name
                                               songNameText.setText(input.getText());
+                                              input.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                                                  public void onFocusChange(View arg0, boolean arg1) {
+                                                      InputMethodManager inputMgnrs = (InputMethodManager) v.getContext().
+                                                              getSystemService(Context.INPUT_METHOD_SERVICE);
+                                                      inputMgnrs.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                                                  }
+                                              });
+                                              dialog.dismiss();
 
 
                                           }
@@ -209,7 +253,17 @@ public class MusicPlayer extends AppCompatActivity  {
                                       builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                                           @Override
                                           public void onClick(DialogInterface dialog, int which) {
-                                              dialog.cancel();
+                                              dialog.dismiss();
+                                              input.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                                                  public void onFocusChange(View arg0, boolean arg1) {
+                                                      InputMethodManager inputMgnr = (InputMethodManager) v.getContext().
+                                                              getSystemService(Context.INPUT_METHOD_SERVICE);
+                                                      inputMgnr.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                                                  }
+                                              });
+
+
+
                                           }
                                       });
 
@@ -218,9 +272,141 @@ public class MusicPlayer extends AppCompatActivity  {
 
                               }
                       );
+      ImageButton fftButton = (ImageButton)findViewById(R.id.fftButton);
+      fftButton.setOnClickListener(
+              new ImageButton.OnClickListener(){
+                  @Override
+                  public void onClick(View v) {
+
+                      System.out.println("Selected file = "+songFile.getAbsolutePath());
+
+                      ByteArrayOutputStream out = new ByteArrayOutputStream();
+                      BufferedInputStream in = null;
+                      try {
+                          in = new BufferedInputStream(new FileInputStream(songFile.getAbsolutePath()));
+                      } catch (FileNotFoundException e) {
+                          e.printStackTrace();
+                      }
+
+                      if (in != null) {
+                          int read;
+                          byte[] buff = new byte[1024];
+                          try {
+                              while ((read = in.read(buff)) > 0) {
+                                  out.write(buff, 0, read);
+                              }
+                              out.flush();
+                          } catch (IOException e) {
+                              e.printStackTrace();
+                          }
+                          byte[] audioBytes = out.toByteArray(); // 587820
+
+                          int audiosize = (audioBytes.length - 44) / 4;  // 146944
+                          double[] realData = new double[audiosize];
+                          double[] imagData = new double[audiosize];
+
+                          for (int i = 44, r = 0; i < audioBytes.length; i += 4, r++) {
+                              byte[] rawbytes = new byte[2];
+
+                              rawbytes[0] = audioBytes[i];
+                              rawbytes[1] = audioBytes[i + 1];
+//                              for (int  j=2; j<8; j++) {
+//                                  rawbytes[j] = 0;
+//                              }
+
+                              Short audioValue = ByteBuffer.wrap(rawbytes).getShort();
+//                              System.out.println(r+" "+audioValue);
+                              realData[r] = audioValue.doubleValue();
+                              imagData[r] = 0d;
+                          }
+
+
+//                          double[] realDataL = new double[audiosize / 2]; // 73472
+//                          double[] realDataR = new double[audiosize / 2];
+//                          for (int i = 0, y = 0; i < realData.length; i += 2, y++) {
+//                              realDataL[y] = realData[i];
+//                              realDataR[y] = realData[i + 1];
+//                          }
+
+                          FFTbase fft = new FFTbase();
+
+                          int windowSize = 1024;
+                          int c = 0;
+                          while (c < realData.length) {
+                              double[] rdata = new double[windowSize];
+                              double[] idata = new double[windowSize];
+
+                              for (int i = 0; i < windowSize; i++) {
+                                  if (c + i < realData.length) {
+                                      rdata[i] = realData[c + i];
+                                  } else {
+                                      rdata[i] = 0;
+                                  }
+                                  idata[i] = 0;
+                              }
+
+                              double[] newarray = fft.fft(rdata, idata, true);
+
+                              //System.out.println(c);
+
+                              double maxVal = -1;
+                              int maxIndex = -1;
+                              for (int j = 0; j < newarray.length; j+=2) {
+                                  double asd = newarray[j] * newarray[j] + newarray[j+1] * newarray[j+1];
+                                  if (asd > maxVal) {
+                                      maxVal = asd;
+                                      maxIndex = j;
+                                  }
+                              }
+                              System.out.println("\t"+c+"\t"+Math.sqrt(maxVal)+"\t"+maxIndex);
+                              c += windowSize;
+                          }
+
+
+                      }
+
+//                      File myFile = new File("/storage/emulated/0/Humposer/record_temp.raw");
+
+
+
+//
+//                      Complex[] complexData = new Complex[audioData.length];
+//                      for (int i = 0; i < complexData.length; i++) {
+//                          complexData[i] = new Complex(audioData[i], 0);
+//                      }
+
                   }
-
-
+              }
+      );
+                  }
+//    private void activityList() {
+//        System.gc();
+//        staticSpinner = (Spinner) findViewById(R.id.static_spinner);
+//
+//        // Create an ArrayAdapter using the string array and a default spinner
+//        ArrayAdapter<CharSequence> staticAdapter = ArrayAdapter
+//                .createFromResource(this, R.array.activity_array,
+//                        android.R.layout.simple_spinner_item);
+//
+//        // Specify the layout to use when the list of choices appears
+//        staticAdapter
+//                .setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//
+//        // Apply the adapter to the spinner
+//        staticSpinner.setAdapter(staticAdapter);
+//
+//
+//        staticSpinner.setOnItemClickListener(activityclicked);
+//    }
+//
+//    protected AdapterView.OnItemClickListener activityclicked = new AdapterView.OnItemClickListener() {
+//        public void onItemClick(AdapterView parent, View v, int position, long id) {
+//            System.gc();
+//            Intent g = new Intent(getBaseContext(), MusicPage.class);
+//            startActivity(g);
+//
+//        }
+//    };
 
 
 
