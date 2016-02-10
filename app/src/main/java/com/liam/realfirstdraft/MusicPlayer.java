@@ -23,6 +23,7 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.media.AudioFormat;
 
@@ -40,6 +41,7 @@ import java.nio.ByteBuffer;
 
 
 public class MusicPlayer extends AppCompatActivity  {
+    private float r;
     private String saveToFileName;
     private Spinner staticSpinner;
     private Spinner dynamicSpinner;
@@ -51,6 +53,8 @@ public class MusicPlayer extends AppCompatActivity  {
     private File extDirectory = new File(Environment.getExternalStorageDirectory(), "Humposer");
     private Complex[] complexData;
     private  TextView songNameText;
+    private int[] zums;
+
 
 
     protected void renameFile() {
@@ -80,16 +84,47 @@ public class MusicPlayer extends AppCompatActivity  {
 
   @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_music_player);
+      super.onCreate(savedInstanceState);
+      setContentView(R.layout.activity_music_player);
 //        activityList();
 
 
       final String id = getIntent().getExtras().getString("listItem");
-      songNameText= (TextView) findViewById(R.id.songNameText);
+      songNameText = (TextView) findViewById(R.id.songNameText);
       songNameText.setText(id);
       songFile = new File(extDirectory + File.separator + id);
       newFile = new File(songFile.getParent() + File.separator + saveToFileName);
+
+//      staticSpinner = (Spinner) findViewById(R.id.spinner);
+//
+//      final SpinnerAdapter spinnerAdapter = ArrayAdapter.createFromResource(this, R.array.activity_array, android.R.layout.simple_spinner_dropdown_item);
+//      staticSpinner.setAdapter(spinnerAdapter);
+//      staticSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//          @Override
+//          public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+//
+//              if(position==1){
+//                  Intent a = new Intent(getBaseContext(), AudioRecordPages.class);
+//                  startActivity(a);
+//              }else if(position==2){
+//                  Intent b = new Intent(getBaseContext(), MusicPage.class);
+//                  startActivity(b);
+//              }
+//              else if(position==3){
+//                  Intent c = new Intent(getBaseContext(), SheetMusic.class);
+//                  startActivity(c);
+//              }
+//
+//          }
+//
+//          @Override
+//          public void onNothingSelected(AdapterView<?> parent) {
+//
+//
+//          }
+//      });
+
+
 
       ImageButton backButton2 = (ImageButton) findViewById(R.id.backButton2);
 
@@ -124,7 +159,7 @@ public class MusicPlayer extends AppCompatActivity  {
 
 //Button
 
-              ImageButton deleteButton = (ImageButton) findViewById(R.id.deleteButton);
+      ImageButton deleteButton = (ImageButton) findViewById(R.id.deleteButton);
       deleteButton.setOnClickListener(
               new ImageButton.OnClickListener() {
                   @Override
@@ -140,12 +175,12 @@ public class MusicPlayer extends AppCompatActivity  {
                               startActivity(x);
                           }
                       });
-                          maker.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                              @Override
-                              public void onClick(DialogInterface dialog, int which) {
-                                  dialog.cancel();
-                              }
-                          });
+                      maker.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                          @Override
+                          public void onClick(DialogInterface dialog, int which) {
+                              dialog.cancel();
+                          }
+                      });
                       maker.create();
                       maker.show();
                   }
@@ -180,8 +215,7 @@ public class MusicPlayer extends AppCompatActivity  {
                                   } catch (IOException ioe) {
                                       System.out.println(ioe.getMessage());
                                   }
-                              }
-                              else {
+                              } else {
                                   try {
                                       mediaPlayer = new MediaPlayer();
                                       mediaPlayer.setDataSource(newFile.getAbsolutePath());
@@ -204,81 +238,80 @@ public class MusicPlayer extends AppCompatActivity  {
 
 
 //Botton
-                      ImageButton renameButton = (ImageButton) findViewById(R.id.renameButton);
-                      renameButton.setOnClickListener(
-                              new ImageButton.OnClickListener() {
-                                  @Override
-                                  public void onClick(final View v) {
-                                      AlertDialog.Builder builder = new AlertDialog.Builder(MusicPlayer.this);
+      ImageButton renameButton = (ImageButton) findViewById(R.id.renameButton);
+      renameButton.setOnClickListener(
+              new ImageButton.OnClickListener() {
+                  @Override
+                  public void onClick(final View v) {
+                      AlertDialog.Builder builder = new AlertDialog.Builder(MusicPlayer.this);
 
                                        /* final ArrayList<String> listViewValues = new ArrayList<>();
 -                        for (File aFileList : fileList) {
 -                            System.out.println(aFileList.getAbsoluteFile());
 -                            listViewValues.add(aFileList.getName());
 -                        }*/
-                                      builder.setTitle(id);
+                      builder.setTitle(id);
 
 
-                                      final EditText input = new EditText(MusicPlayer.this);
+                      final EditText input = new EditText(MusicPlayer.this);
 // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
-                                      input.setInputType(InputType.TYPE_CLASS_TEXT);
-                                      builder.setView(input);
-                                      input.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-                                          public void onFocusChange(View arg0, boolean arg1) {
-                                              InputMethodManager inputMgr = (InputMethodManager) v.getContext().
-                                                      getSystemService(Context.INPUT_METHOD_SERVICE);
-                                              inputMgr.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-                                          }
-                                      });
+                      input.setInputType(InputType.TYPE_CLASS_TEXT);
+                      builder.setView(input);
+                      input.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                          public void onFocusChange(View arg0, boolean arg1) {
+                              InputMethodManager inputMgr = (InputMethodManager) v.getContext().
+                                      getSystemService(Context.INPUT_METHOD_SERVICE);
+                              inputMgr.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+                          }
+                      });
 // Set up the buttons
-                                      builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                          @Override
-                                          public void onClick(DialogInterface dialog, int which) {
-                                              saveToFileName = input.getText().toString();
-                                              renameFile();
-                                              // File (or directory) with old name
-                                              songNameText.setText(input.getText());
-                                              input.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-                                                  public void onFocusChange(View arg0, boolean arg1) {
-                                                      InputMethodManager inputMgnrs = (InputMethodManager) v.getContext().
-                                                              getSystemService(Context.INPUT_METHOD_SERVICE);
-                                                      inputMgnrs.hideSoftInputFromWindow(v.getWindowToken(), 0);
-                                                  }
-                                              });
-                                              dialog.dismiss();
-
-
-                                          }
-                                      });
-                                      builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                          @Override
-                                          public void onClick(DialogInterface dialog, int which) {
-                                              dialog.dismiss();
-                                              input.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-                                                  public void onFocusChange(View arg0, boolean arg1) {
-                                                      InputMethodManager inputMgnr = (InputMethodManager) v.getContext().
-                                                              getSystemService(Context.INPUT_METHOD_SERVICE);
-                                                      inputMgnr.hideSoftInputFromWindow(v.getWindowToken(), 0);
-                                                  }
-                                              });
-
-
-
-                                          }
-                                      });
-
-                                      builder.show();
+                      builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                          @Override
+                          public void onClick(DialogInterface dialog, int which) {
+                              saveToFileName = input.getText().toString();
+                              renameFile();
+                              // File (or directory) with old name
+                              songNameText.setText(input.getText());
+                              input.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                                  public void onFocusChange(View arg0, boolean arg1) {
+                                      InputMethodManager inputMgnrs = (InputMethodManager) v.getContext().
+                                              getSystemService(Context.INPUT_METHOD_SERVICE);
+                                      inputMgnrs.hideSoftInputFromWindow(v.getWindowToken(), 0);
                                   }
+                              });
+                              dialog.dismiss();
 
-                              }
-                      );
-      ImageButton fftButton = (ImageButton)findViewById(R.id.fftButton);
+
+                          }
+                      });
+                      builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                          @Override
+                          public void onClick(DialogInterface dialog, int which) {
+                              dialog.dismiss();
+                              input.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                                  public void onFocusChange(View arg0, boolean arg1) {
+                                      InputMethodManager inputMgnr = (InputMethodManager) v.getContext().
+                                              getSystemService(Context.INPUT_METHOD_SERVICE);
+                                      inputMgnr.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                                  }
+                              });
+
+
+                          }
+                      });
+
+                      builder.show();
+                  }
+
+              }
+      );
+      ImageButton fftButton = (ImageButton) findViewById(R.id.fftButton);
       fftButton.setOnClickListener(
-              new ImageButton.OnClickListener(){
+              new ImageButton.OnClickListener() {
                   @Override
                   public void onClick(View v) {
 
-                      System.out.println("Selected file = "+songFile.getAbsolutePath());
+                      System.out.println("Selected file = " + songFile.getAbsolutePath());
 
                       ByteArrayOutputStream out = new ByteArrayOutputStream();
                       BufferedInputStream in = null;
@@ -347,26 +380,48 @@ public class MusicPlayer extends AppCompatActivity  {
 
                               double[] newarray = fft.fft(rdata, idata, true);
 
+
                               //System.out.println(c);
 
                               double maxVal = -1;
                               int maxIndex = -1;
-                              for (int j = 0; j < newarray.length; j+=2) {
-                                  double asd = newarray[j] * newarray[j] + newarray[j+1] * newarray[j+1];
+                              float sum = 0;
+                              float sSum = 0;
+                              for (int j = 0; j < newarray.length; j += 2) {
+                                  double asd = newarray[j] * newarray[j] + newarray[j + 1] * newarray[j + 1];
                                   if (asd > maxVal) {
                                       maxVal = asd;
                                       maxIndex = j;
                                   }
+                                  if (j < 300) {
+                                      maxIndex = 0;
+
+
+                                  }
+
                               }
-                              System.out.println("\t"+c+"\t"+Math.sqrt(maxVal)+"\t"+maxIndex);
+                                  float[] r = new float[newarray.length];
+                                  for (int i=0;i<newarray.length;i++) {
+                                      sum = 0;
+                                      for (int j=0;j<newarray.length-i;j++) {
+                                          sum+=maxIndex*maxVal;
+                                      }
+                                      r[i]=sum;
+                                  }
+
+
+                              System.out.println("\t" + c + "\t" + Math.sqrt(maxVal) + "\t" + maxIndex + "\t" + (sum/1.00E12)*100);
                               c += windowSize;
+
+                              }
+
                           }
 
 
                       }
 
-//                      File myFile = new File("/storage/emulated/0/Humposer/record_temp.raw");
 
+//                      File myFile = new File("/storage/emulated/0/Humposer/record_temp.raw");
 
 
 //
@@ -376,37 +431,12 @@ public class MusicPlayer extends AppCompatActivity  {
 //                      }
 
                   }
-              }
+
       );
-                  }
-//    private void activityList() {
-//        System.gc();
-//        staticSpinner = (Spinner) findViewById(R.id.static_spinner);
-//
-//        // Create an ArrayAdapter using the string array and a default spinner
-//        ArrayAdapter<CharSequence> staticAdapter = ArrayAdapter
-//                .createFromResource(this, R.array.activity_array,
-//                        android.R.layout.simple_spinner_item);
-//
-//        // Specify the layout to use when the list of choices appears
-//        staticAdapter
-//                .setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//
-//        // Apply the adapter to the spinner
-//        staticSpinner.setAdapter(staticAdapter);
-//
-//
-//        staticSpinner.setOnItemClickListener(activityclicked);
-//    }
-//
-//    protected AdapterView.OnItemClickListener activityclicked = new AdapterView.OnItemClickListener() {
-//        public void onItemClick(AdapterView parent, View v, int position, long id) {
-//            System.gc();
-//            Intent g = new Intent(getBaseContext(), MusicPage.class);
-//            startActivity(g);
-//
-//        }
-//    };
+  }
+
+
+
 
 
 

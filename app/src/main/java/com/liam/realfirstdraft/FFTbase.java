@@ -114,6 +114,7 @@ class FFTbase {
             newArray[i + 1] = xImag[i2] * radice;
         }
         return newArray;
+
     }
 
     /**

@@ -10,7 +10,8 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.liam.realfirstdraft.MusicPlayer"
-    tools:showIn="@layout/activity_music_player">
+    tools:showIn="@layout/activity_music_player"
+    android:background="#000000">
 
     <TextView
         android:layout_width="wrap_content"
@@ -20,7 +21,8 @@
         android:id="@+id/songNameText"
         android:layout_marginTop="56dp"
         android:layout_below="@+id/torecorderpage"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:textColor="#45b9b3" />
 
     <ImageButton
         android:layout_width="90dp"
@@ -54,11 +56,11 @@
         android:clickable="true" />
 
     <ImageButton
-        android:layout_width="100dp"
+        android:layout_width="150dp"
         android:layout_height="100dp"
         android:id="@+id/fftButton"
         android:layout_marginTop="42dp"
-        android:background="@drawable/background"
+        android:background="@drawable/fftbutton"
         android:clickable="true"
         android:onClick="anylize"
         android:layout_below="@+id/deleteButton"
@@ -78,10 +80,17 @@
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:id="@+id/torecorderpage"
+        android:background="@drawable/recorderpage"
         android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:background="@drawable/recorderpage" />
+        android:layout_alignRight="@+id/renameButton"
+        android:layout_alignEnd="@+id/renameButton" />
+
+    <Spinner
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:id="@+id/spinner"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
 
     <!--<Spinner-->
         <!--android:id="@+id/static_spinner"-->
