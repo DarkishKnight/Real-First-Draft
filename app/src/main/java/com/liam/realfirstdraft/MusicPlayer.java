@@ -4,28 +4,19 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.media.AudioFormat;
-import android.media.AudioManager;
-import android.media.AudioTrack;
-import android.media.MediaCodecInfo;
 import android.media.MediaPlayer;
-import android.media.MediaRecorder;
-import android.net.rtp.AudioStream;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
 import android.widget.TextView;
-import android.media.AudioFormat;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
@@ -40,11 +31,10 @@ import java.lang.reflect.Array;
 import java.nio.ByteBuffer;
 
 
-public class MusicPlayer extends AppCompatActivity  {
+public class MusicPlayer extends AppCompatActivity {
     private float r;
     private String saveToFileName;
-    private Spinner staticSpinner;
-    private Spinner dynamicSpinner;
+    private Spinner spinnerMenue;
     private File songFile;
     private MediaPlayer mediaPlayer;
     private File newFile;
@@ -54,6 +44,7 @@ public class MusicPlayer extends AppCompatActivity  {
     private Complex[] complexData;
     private  TextView songNameText;
     private int[] zums;
+    private static final String[] list = {"Music","Sheet Music","Music Recorder","Music Player"};
 
 
 
@@ -88,43 +79,28 @@ public class MusicPlayer extends AppCompatActivity  {
       setContentView(R.layout.activity_music_player);
 //        activityList();
 
-
       final String id = getIntent().getExtras().getString("listItem");
       songNameText = (TextView) findViewById(R.id.songNameText);
       songNameText.setText(id);
       songFile = new File(extDirectory + File.separator + id);
       newFile = new File(songFile.getParent() + File.separator + saveToFileName);
 
-//      staticSpinner = (Spinner) findViewById(R.id.spinner);
-//
-//      final SpinnerAdapter spinnerAdapter = ArrayAdapter.createFromResource(this, R.array.activity_array, android.R.layout.simple_spinner_dropdown_item);
-//      staticSpinner.setAdapter(spinnerAdapter);
-//      staticSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-//          @Override
-//          public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-//
-//              if(position==1){
-//                  Intent a = new Intent(getBaseContext(), AudioRecordPages.class);
-//                  startActivity(a);
-//              }else if(position==2){
-//                  Intent b = new Intent(getBaseContext(), MusicPage.class);
-//                  startActivity(b);
-//              }
-//              else if(position==3){
-//                  Intent c = new Intent(getBaseContext(), SheetMusic.class);
-//                  startActivity(c);
-//              }
-//
-//          }
-//
-//          @Override
-//          public void onNothingSelected(AdapterView<?> parent) {
-//
-//
-//          }
-//      });
+
+      spinnerMenue = (Spinner)findViewById(R.id.spinner1);
+      ArrayAdapter adapter = new ArrayAdapter(MusicPlayer.this,
+              android.R.layout.simple_spinner_item,list);
+      adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+      spinnerMenue.setAdapter(adapter);
+      onItemSelectedSpinner();
 
 
+//      spinnerMenue = (Spinner) findViewById(R.id.spinner1);
+////
+//      ArrayAdapter adapter = ArrayAdapter.createFromResource(this, R.array.activity_array, android.R.layout.simple_spinner_item);
+//      adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//      spinnerMenue.setAdapter(adapter);
+//
+//      onItemSelectedSpinner();
 
       ImageButton backButton2 = (ImageButton) findViewById(R.id.backButton2);
 
@@ -434,6 +410,38 @@ public class MusicPlayer extends AppCompatActivity  {
 
       );
   }
+    public void onItemSelectedSpinner(){
+
+        spinnerMenue = (Spinner) findViewById(R.id.spinner1);
+        spinnerMenue.setSelection(0);
+        spinnerMenue.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+                switch(pos) {
+                    case 0:
+                        Intent i = new Intent(getBaseContext(), MusicPage.class);
+                        startActivity(i);
+                        break;
+                    case 1:
+                        Intent h = new Intent(getBaseContext(), SheetMusic.class);
+                        startActivity(h);
+                        break;
+                    case 2:
+                        Intent j = new Intent(getBaseContext(), AudioRecordPages.class);
+                        startActivity(j);
+                        break;
+                    case 3:
+                        Intent k = new Intent(getBaseContext(), MusicPlayer.class);
+                        startActivity(k);
+                        break;
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            // TODO Auto-generated method stub
+            }
+        });
+    }
 
 
 
