@@ -102,8 +102,9 @@
     <string name="title_activity_music_player">MusicPlayer</string>
     <string name="title_activity_audio_recorder_page">AudioRecorderPages</string>
     <string-array name="activity_array">
-        <item>Music</item>
-        <item>Sheet Music</item>
-        <item>Music Recorder</item>
+        <item name = "Music">Select</item>
+        <item name = "Sheet Music">Select</item>
+        <item name = "Music Recorder">Select</item>
+        <item name = "Music Player">Select</item>
     </string-array>
 </resources>
