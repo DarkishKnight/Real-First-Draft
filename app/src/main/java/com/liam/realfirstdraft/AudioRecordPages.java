@@ -70,7 +70,7 @@ public class AudioRecordPages extends AppCompatActivity {
         glowAnimation1 = (AnimationDrawable) relativeLayout.getBackground();
 
         bufferSize = AudioRecord.getMinBufferSize(44100,
-                AudioFormat.CHANNEL_IN_MONO,
+                AudioFormat.CHANNEL_IN_STEREO,
                 AudioFormat.ENCODING_PCM_16BIT);
 
         final EditText beginningText = new EditText(this);
@@ -166,21 +166,8 @@ public class AudioRecordPages extends AppCompatActivity {
 
     private void startRecording(){
         recorder = new AudioRecord(MediaRecorder.AudioSource.MIC,
-                44100, AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT, bufferSize);
-//        String state = Environment.getExternalStorageState();
-//        if (Environment.MEDIA_MOUNTED.equals(state)) {
-//            System.out.println("External storage is writable");
-//        }
-//        else {
-//            System.out.println("External storage is NOT writable");
-//        }
-//        File audioDir = new File(Environment.getExternalStorageDirectory(),"Humposer");
-//        File audioDir = new File("/data/com.liam/Humposer");
-//        if (!audioDir.exists())
-//            audioDir.mkdir();
+                44100, AudioFormat.CHANNEL_IN_STEREO, AudioFormat.ENCODING_PCM_16BIT, bufferSize);
 
-//        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-//        tempFile1 = new File(audioDir, "tempAudioFile_"+timeStamp+".wav");
 
         int i = recorder.getState();
         if(i==1)

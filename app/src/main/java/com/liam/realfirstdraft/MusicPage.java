@@ -60,7 +60,6 @@ public class MusicPage extends AppCompatActivity {
 
         ArrayList<String> listViewValues = new ArrayList<>();
         for (File aFileList : fileList) {
-            System.out.println(aFileList.getAbsoluteFile());
             listViewValues.add(aFileList.getName());
         }
 

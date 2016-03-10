@@ -11,40 +11,41 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.Spinner;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.lang.ref.SoftReference;
-import java.lang.reflect.Array;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 
 
 public class MusicPlayer extends AppCompatActivity {
-    private float r;
+//    private float r;
     private String saveToFileName;
-    private Spinner spinnerMenue;
     private File songFile;
     private MediaPlayer mediaPlayer;
     private File newFile;
     private int[] state;
     private int maxStates;
     private File extDirectory = new File(Environment.getExternalStorageDirectory(), "Humposer");
-    private Complex[] complexData;
+//    private Complex[] complexData;
     private  TextView songNameText;
-    private int[] zums;
-    private static final String[] list = {"Music","Sheet Music","Music Recorder","Music Player"};
+//    private static final String[] list = {"Music","Sheet Music","Music Recorder","Music Player"};
+    private ArrayList<Integer> noteInfo = new ArrayList<>();
+    File file;
+    ProgressBar progressBar;
+    String name;
+
 
 
 
@@ -61,16 +62,7 @@ public class MusicPlayer extends AppCompatActivity {
         }
 
     }
-       // ArrayList<String> fileList; // Initialize all this stuff
 
-        //int getSongPosition(String fileList) {
-       //     return fileList.indexOf(category);
-       // }
-   // }
-    //protected void saveFile() {
-
-                 //  File newFile = new File(songNameText.getParent()+File.separator+saveToFileName);
-               //  songNameText.renameTo(newFile);
 
 
   @Override
@@ -78,6 +70,8 @@ public class MusicPlayer extends AppCompatActivity {
       super.onCreate(savedInstanceState);
       setContentView(R.layout.activity_music_player);
 //        activityList();
+      progressBar = (ProgressBar) findViewById(R.id.progressBar);
+      progressBar.setVisibility(View.INVISIBLE);
 
       final String id = getIntent().getExtras().getString("listItem");
       songNameText = (TextView) findViewById(R.id.songNameText);
@@ -85,22 +79,6 @@ public class MusicPlayer extends AppCompatActivity {
       songFile = new File(extDirectory + File.separator + id);
       newFile = new File(songFile.getParent() + File.separator + saveToFileName);
 
-
-      spinnerMenue = (Spinner)findViewById(R.id.spinner1);
-      ArrayAdapter adapter = new ArrayAdapter(MusicPlayer.this,
-              android.R.layout.simple_spinner_item,list);
-      adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-      spinnerMenue.setAdapter(adapter);
-      onItemSelectedSpinner();
-
-
-//      spinnerMenue = (Spinner) findViewById(R.id.spinner1);
-////
-//      ArrayAdapter adapter = ArrayAdapter.createFromResource(this, R.array.activity_array, android.R.layout.simple_spinner_item);
-//      adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//      spinnerMenue.setAdapter(adapter);
-//
-//      onItemSelectedSpinner();
 
       ImageButton backButton2 = (ImageButton) findViewById(R.id.backButton2);
 
@@ -208,7 +186,15 @@ public class MusicPlayer extends AppCompatActivity {
                               break;
 
                       }
-                  }
+                      mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                          @Override
+                          public void onCompletion(MediaPlayer mp) {
+                              playButton.setBackgroundResource(R.drawable.playback);
+                          }
+                      });
+
+                      }
+
 
               });
 
@@ -220,12 +206,6 @@ public class MusicPlayer extends AppCompatActivity {
                   @Override
                   public void onClick(final View v) {
                       AlertDialog.Builder builder = new AlertDialog.Builder(MusicPlayer.this);
-
-                                       /* final ArrayList<String> listViewValues = new ArrayList<>();
--                        for (File aFileList : fileList) {
--                            System.out.println(aFileList.getAbsoluteFile());
--                            listViewValues.add(aFileList.getName());
--                        }*/
                       builder.setTitle(id);
 
 
@@ -286,7 +266,7 @@ public class MusicPlayer extends AppCompatActivity {
               new ImageButton.OnClickListener() {
                   @Override
                   public void onClick(View v) {
-
+                      progressBar.setVisibility(View.VISIBLE);
                       System.out.println("Selected file = " + songFile.getAbsolutePath());
 
                       ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -296,7 +276,11 @@ public class MusicPlayer extends AppCompatActivity {
                       } catch (FileNotFoundException e) {
                           e.printStackTrace();
                       }
+                      autoCorrelate(in);
+                      progressBar.setVisibility(View.INVISIBLE);
 
+
+/*
                       if (in != null) {
                           int read;
                           byte[] buff = new byte[1024];
@@ -393,7 +377,7 @@ public class MusicPlayer extends AppCompatActivity {
 
                           }
 
-
+*/
                       }
 
 
@@ -410,38 +394,169 @@ public class MusicPlayer extends AppCompatActivity {
 
       );
   }
-    public void onItemSelectedSpinner(){
+    private static final double[] FREQUENCIES = { 174.61, 164.81, 155.56, 146.83, 138.59, 130.81, 123.47, 116.54, 110.00, 103.83, 98.00, 92.50, 87.31, 82.41, 77.78};
+    private static final String[] NAME = { "F",    "E",    "D#",   "D",    "C#",   "C",    "B",    "A#",   "A",    "G#",   "G",   "F#",  "F",   "E",   "D#"};
 
-        spinnerMenue = (Spinner) findViewById(R.id.spinner1);
-        spinnerMenue.setSelection(0);
-        spinnerMenue.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-                switch(pos) {
-                    case 0:
-                        Intent i = new Intent(getBaseContext(), MusicPage.class);
-                        startActivity(i);
-                        break;
-                    case 1:
-                        Intent h = new Intent(getBaseContext(), SheetMusic.class);
-                        startActivity(h);
-                        break;
-                    case 2:
-                        Intent j = new Intent(getBaseContext(), AudioRecordPages.class);
-                        startActivity(j);
-                        break;
-                    case 3:
-                        Intent k = new Intent(getBaseContext(), MusicPlayer.class);
-                        startActivity(k);
-                        break;
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-            // TODO Auto-generated method stub
-            }
-        });
+    private static double normaliseFreq(double hz) {
+        // get hz into a standard range to make things easier to deal with
+        while ( hz < 82.41 ) {
+            hz = 2*hz;
+        }
+        while ( hz > 164.81 ) {
+            hz = 0.5*hz;
+        }
+        return hz;
     }
+
+    private static int closestNote(double hz) {
+        double minDist = Double.MAX_VALUE;
+        int minFreq = -1;
+        for ( int i = 0; i < FREQUENCIES.length; i++ ) {
+            double dist = Math.abs(FREQUENCIES[i]-hz);
+            if ( dist < minDist ) {
+                minDist=dist;
+                minFreq=i;
+            }
+        }
+
+        return minFreq;
+    }
+
+    public void autoCorrelate(BufferedInputStream in) {
+
+
+//        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+//        progressBar.setVisibility(View.VISIBLE);
+
+        File noteDir = new File(Environment.getExternalStorageDirectory(),"Humposer Notes");
+        if (!noteDir.exists())
+            noteDir.mkdir();
+
+        int FREQ_RANGE = 128;
+        float sampleRate = 44100;
+
+        byte[] buffer = new byte[2*9600];
+        int[] a = new int[buffer.length/2];
+
+        int n = -1;
+        try {
+            while ((n = in.read(buffer)) > 0) {
+
+                for ( int i = 0; i < n; i+=2 ) {
+                    int value = (short)((buffer[i]&0xFF) | ((buffer[i+1]&0xFF) << 8));
+                    a[i >> 1] = value;
+                }
+
+                double prevDiff = 0;
+                double prevDx = 0;
+                double maxDiff = 0;
+
+
+                int sampleLen = 0;
+
+
+
+                int len = a.length/4;
+//            this is original
+                for ( int i = 0; i < len; i++ ) {
+//                for ( int i = 0; i < len; i+=4 ) {
+                    double diff = 0;
+                    for ( int j = 0; j < len; j++ ) {
+                        diff += Math.abs(a[j]-a[i+j]);
+                    }
+
+                    double dx = prevDiff-diff;
+
+
+                    if ( dx < 0 && prevDx > 0 ) {
+                        // only look for troughs that drop to less than 10% of peak
+                        if ( diff < (0.1*maxDiff) ) {
+                            if ( sampleLen == 0 ) {
+                                sampleLen=i-1;
+                            }
+                        }
+                    }
+
+                    prevDx = dx;
+                    prevDiff=diff;
+                    maxDiff=Math.max(diff,maxDiff);
+                }
+
+                if ( sampleLen > 0 ) {
+                    double frequency = (sampleRate/sampleLen);
+
+                    frequency = normaliseFreq(frequency);
+                    int note = closestNote(frequency);
+                    int value = 0;
+                    double matchFreq = FREQUENCIES[note];
+                    if ( frequency < matchFreq ) {
+                        double prevFreq = FREQUENCIES[note+1];
+                        value = (int)(-FREQ_RANGE*(frequency-matchFreq)/(prevFreq-matchFreq));
+                        System.out.println("Value1\t" + note);
+                        try {noteInfo.add(note);}
+                        catch (RuntimeException e){}
+//                        if(songFile.exists()){
+//                            file = new File(noteDir.getAbsolutePath()+File.separator +songFile.getName()+"notes");
+//                        }
+//                        else {
+//                            file = new File(noteDir.getAbsolutePath()+File.separator +newFile.getName()+"notes");
+//                        }
+//
+//                        FileWriter write = new FileWriter(file);
+//                        write.write(note);
+
+
+
+
+
+
+                    }
+                    else {
+                        double nextFreq = FREQUENCIES[note-1];
+                        value = (int)(FREQ_RANGE*(frequency-matchFreq)/(nextFreq-matchFreq));
+                        System.out.println("Value2\t" + note);
+                        try {noteInfo.add(note);}
+                        catch (RuntimeException e){}
+//                        if(songFile.exists()){
+//                            file = new File(noteDir.getAbsolutePath()+File.separator +songFile.getName()+"notes");
+//                        }
+//                        else {
+//                            file = new File(noteDir.getAbsolutePath()+File.separator + newFile.getName()+"notes");
+//                        }
+//
+//                        FileWriter write = new FileWriter(file);
+//                        write.write(note);
+
+                    }
+                }
+
+
+//                try { Thread.sleep(250); }catch( Exception e ){}
+            }
+
+
+//            System.out.println(noteInfo);
+            System.out.println("file = "+file);
+            System.out.println(noteInfo);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Bundle b = new Bundle();
+        if(songFile.exists()){
+            name = songFile.getName();
+        }
+        else{
+            name = newFile.getName();
+        }
+        b.putString("Name",name);
+        b.putIntegerArrayList("Notes", noteInfo);
+        Intent p = new Intent(getBaseContext(), NotePage.class);
+        p.putExtras(b);
+        startActivity(p);
+
+    }
+
+
 
 
 
@@ -462,23 +577,5 @@ public class MusicPlayer extends AppCompatActivity {
             mediaPlayer.stop();
     }
 }
-/*File file = new File(extDirectory + File.separator + id);
--
--// File (or directory) with new name
--File file2 = new File(extDirectory + File.separator + String.valueOf(input));
--
--if (file2.exists())
--        try {
--        throw new IOException("file exists");
--        } catch (IOException e) {
--        e.printStackTrace();
--        }
--
--// Rename file (or directory)
--        boolean success = file.renameTo(file2);
--
--        if (!success) {
--        // File was not successfully renamed
--        }
--        */
+
 
