@@ -1,17 +1,26 @@
 package com.liam.realfirstdraft;
 
+import android.annotation.TargetApi;
+import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.provider.ContactsContract;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -26,25 +35,23 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.*;
 
 
 public class NotePage extends AppCompatActivity {
-    Map<Object, Integer> notes = new HashMap<Object, Integer>(50);
-    ArrayList<Integer> noteImage = new ArrayList<>(20);
+    Map<Integer, Object> notes = new HashMap<Integer, Object>();
+    ArrayList<Integer> noteImage = new ArrayList<>();
     ArrayList<Integer> noteArray = new ArrayList<>();
     ArrayList<File> noteArray2 = new ArrayList<>();
-    ImageView firstImage;
-    ImageView secondImage;
-    ImageView thirdImage;
-    ImageView fourthImage;
-    ImageView fifthImage ;
-    ImageView sixthImage;
-    ImageView seventhImage;
+    ImageView[] imageViews;
     File textFile;
     String name;
     String fileToDelete;
     File noteDir;
     File file;
+    FrameLayout frameLayout;
+    int location = 60;
+    String ret;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,18 +59,41 @@ public class NotePage extends AppCompatActivity {
         setContentView(R.layout.activity_note_page);
 
         fileToDelete = getIntent().getExtras().getString("listItem");
-        noteArray = getIntent().getExtras().getIntegerArrayList("Notes");
-        name = getIntent().getExtras().getString("Name");
-        noteDir = new File(Environment.getExternalStorageDirectory(),"Humposer Notes");
-        file = new File(noteDir.getAbsolutePath()+File.separator + fileToDelete);
-        textFile = new File(noteDir.getAbsolutePath()+File.separator+name);
-        addingQuarterNotesToArray();
-//        saveNoteArray();
-        if(noteArray == null){
-            createArray();
+        if(getIntent()!=null && getIntent().getExtras()!= null){
+           noteArray = getIntent().getExtras().getIntegerArrayList("Notes");
         }
 
-//        addingQuarterNotesToArray();
+//        if(getIntent()== null || getIntent().getExtras().getString("Notes")==null){
+//            try {
+//                getStringFromFile(noteDir.getAbsolutePath()+File.separator + fileToDelete);
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//            noteDir = new File(Environment.getExternalStorageDirectory(),"Humposer Notes");
+//            file = new File(noteDir.getAbsolutePath()+File.separator + fileToDelete);
+//            StringTokenizer st = new StringTokenizer(ret,",");
+//            while (st.hasMoreTokens()){
+//                int convertToInt = Integer.parseInt(st.nextToken());
+//                noteArray.add(convertToInt);
+//            }
+//        }
+        name = getIntent().getExtras().getString("Name");
+
+
+
+        imageViews = new ImageView[noteArray.size()];
+//        imageViews[6] = (ImageView) findViewById(R.id.image7);
+//        imageViews[5] = (ImageView) findViewById(R.id.image6);
+//        imageViews[4] = (ImageView) findViewById(R.id.image5);
+//        imageViews[3] = (ImageView) findViewById(R.id.image4);
+//        imageViews[2] = (ImageView) findViewById(R.id.image3);
+//        imageViews[1] = (ImageView) findViewById(R.id.image2);
+//        imageViews[0] = (ImageView) findViewById(R.id.image1);
+
+        addingQuarterNotesToArray();
+//        saveNoteArray();
+
+
 
         TextView title = (TextView) findViewById(R.id.Title);
         title.setText(name);
@@ -102,13 +132,6 @@ public class NotePage extends AppCompatActivity {
 
 
         ImageButton homeButton = (ImageButton) findViewById(R.id.homeButton);
-        seventhImage = (ImageView) findViewById(R.id.image7);
-        sixthImage = (ImageView) findViewById(R.id.image6);
-        fifthImage = (ImageView) findViewById(R.id.image5);
-        fourthImage = (ImageView) findViewById(R.id.image4);
-        thirdImage = (ImageView) findViewById(R.id.image3);
-        secondImage = (ImageView) findViewById(R.id.image2);
-        firstImage = (ImageView) findViewById(R.id.image1);
 
        homeButton.setOnClickListener(
                new ImageButton.OnClickListener()
@@ -150,395 +173,26 @@ public class NotePage extends AppCompatActivity {
 
 
     }
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private void addingQuarterNotesToArray(){
-        notes.put(R.drawable.dsharp, 14);
-        notes.put(R.drawable.e, 13);
-        notes.put(R.drawable.f, 12);
-        notes.put(R.drawable.fsharp, 11);
-        notes.put(R.drawable.g1, 10);
-        notes.put(R.drawable.gsharp, 9);
-        notes.put(R.drawable.a, 8);
-        notes.put(R.drawable.asharp, 7);
-        notes.put(R.drawable.b, 6);
-        notes.put(R.drawable.c, 5);
-        notes.put(R.drawable.csharp, 4);
-        notes.put(R.drawable.d0, 3);
-        notes.put(R.drawable.d0sharp, 2);
-        notes.put(R.drawable.e0, 1);
-        notes.put(R.drawable.f0, 0);
+        notes.put(14, R.drawable.dsharp);
+        notes.put(13, R.drawable.e);
+        notes.put(12, R.drawable.f);
+        notes.put(11, R.drawable.fsharp);
+        notes.put(10, R.drawable.g1);
+        notes.put(9, R.drawable.gsharp);
+        notes.put(8, R.drawable.a);
+        notes.put(7, R.drawable.asharp);
+        notes.put(6, R.drawable.b);
+        notes.put(5, R.drawable.c);
+        notes.put(4, R.drawable.csharp);
+        notes.put(3, R.drawable.d0);
+        notes.put(2, R.drawable.d0sharp);
+        notes.put(1, R.drawable.e0);
+        notes.put(0, R.drawable.f0);
 
-        if(notes.get(R.drawable.dsharp) != null){
-            for(int i = 0; i<noteArray.size(); i++){
-                if(notes.get(R.drawable.dsharp)== noteArray.get(i))
-                    if (noteArray.indexOf(notes.get(R.drawable.dsharp)) == 1) {
-                        firstImage.setBackgroundResource(R.drawable.dsharp);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.dsharp)) == 2) {
-                        secondImage.setBackgroundResource(R.drawable.dsharp);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.dsharp)) == 3) {
-                        thirdImage.setBackgroundResource(R.drawable.dsharp);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.dsharp)) == 4) {
-                        fourthImage.setBackgroundResource(R.drawable.dsharp);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.dsharp)) == 5) {
-                        fifthImage.setBackgroundResource(R.drawable.dsharp);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.dsharp)) == 6) {
-                        sixthImage.setBackgroundResource(R.drawable.dsharp);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.dsharp)) == 7) {
-                        seventhImage.setBackgroundResource(R.drawable.dsharp);
-                    }
-                }
-        }
+        displayImages();
 
-        if(notes.get(R.drawable.g1) != null){
-            for(int i = 0; i<noteArray.size(); i++){
-                if(notes.get(R.drawable.g1)== noteArray.get(i))
-                    if (noteArray.indexOf(notes.get(R.drawable.g1)) == 1) {
-                        firstImage.setBackgroundResource(R.drawable.g1);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.g1)) == 2) {
-                        secondImage.setBackgroundResource(R.drawable.g1);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.g1)) == 3) {
-                        thirdImage.setBackgroundResource(R.drawable.g1);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.g1)) == 4) {
-                        fourthImage.setBackgroundResource(R.drawable.g1);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.g1)) == 5) {
-                        fifthImage.setBackgroundResource(R.drawable.g1);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.g1)) == 6) {
-                        sixthImage.setBackgroundResource(R.drawable.g1);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.g1)) == 7) {
-                        seventhImage.setBackgroundResource(R.drawable.g1);
-                    }
-                }
-        }
-        if (notes.get(R.drawable.d0sharp) != null) {
-            for (int i = 0; i < noteArray.size(); i++) {
-                if (noteArray.get(i) == notes.get(R.drawable.d0sharp))
-//                    noteArray.indexOf(notes.get(R.drawable.d0sharp));
-                    if (noteArray.indexOf(notes.get(R.drawable.d0sharp)) == 1) {
-                        firstImage.setBackgroundResource(R.drawable.d0sharp);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.d0sharp)) == 2) {
-                        secondImage.setBackgroundResource(R.drawable.d0sharp);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.d0sharp)) == 3) {
-                        thirdImage.setBackgroundResource(R.drawable.d0sharp);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.d0sharp)) == 4) {
-                        fourthImage.setBackgroundResource(R.drawable.d0sharp);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.d0sharp)) == 5) {
-                        fifthImage.setBackgroundResource(R.drawable.d0sharp);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.d0sharp)) == 6) {
-                        sixthImage.setBackgroundResource(R.drawable.d0sharp);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.d0sharp)) == 7) {
-                        seventhImage.setBackgroundResource(R.drawable.d0sharp);
-                    }
-            }
-        }
-
-        if(notes.get(R.drawable.d0) != null){
-            for(int i = 0; i<noteArray.size(); i++){
-                if(notes.get(R.drawable.d0)== noteArray.get(i))
-
-                    if (noteArray.indexOf(notes.get(R.drawable.d0)) == 1) {
-                        firstImage.setBackgroundResource(R.drawable.d0);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.d0)) == 2) {
-                        secondImage.setBackgroundResource(R.drawable.d0);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.d0)) == 3) {
-                        thirdImage.setBackgroundResource(R.drawable.d0);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.d0)) == 4) {
-                        fourthImage.setBackgroundResource(R.drawable.d0);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.d0)) == 5) {
-                        fifthImage.setBackgroundResource(R.drawable.d0);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.d0)) == 6) {
-                        sixthImage.setBackgroundResource(R.drawable.d0);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.d0)) == 7) {
-                        seventhImage.setBackgroundResource(R.drawable.d0);
-                    }
-
-            }
-        }
-
-        if(notes.get(R.drawable.e) != null){
-            for(int i = 0; i<noteArray.size(); i++){
-                if(notes.get(R.drawable.e)== noteArray.get(i))
-
-                    if (noteArray.indexOf(notes.get(R.drawable.e)) == 1) {
-                        firstImage.setBackgroundResource(R.drawable.e);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.e)) == 2) {
-                        secondImage.setBackgroundResource(R.drawable.e);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.e)) == 3) {
-                        thirdImage.setBackgroundResource(R.drawable.e);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.e)) == 4) {
-                        fourthImage.setBackgroundResource(R.drawable.e);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.e)) == 5) {
-                        fifthImage.setBackgroundResource(R.drawable.e);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.e)) == 6) {
-                        sixthImage.setBackgroundResource(R.drawable.e);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.e)) == 7) {
-                        seventhImage.setBackgroundResource(R.drawable.e);
-                    }
-            }
-        }
-        if(notes.get(R.drawable.e0) != null){
-            for(int i = 0; i<noteArray.size(); i++){
-                if(notes.get(R.drawable.e0)== noteArray.get(i))
-                    if (noteArray.indexOf(notes.get(R.drawable.e0)) == 1) {
-                        firstImage.setBackgroundResource(R.drawable.e0);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.e0)) == 2) {
-                        secondImage.setBackgroundResource(R.drawable.e0);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.e0)) == 3) {
-                        thirdImage.setBackgroundResource(R.drawable.e0);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.e0)) == 4) {
-                        fourthImage.setBackgroundResource(R.drawable.e0);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.e0)) == 5) {
-                        fifthImage.setBackgroundResource(R.drawable.e0);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.e0)) == 6) {
-                        sixthImage.setBackgroundResource(R.drawable.e0);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.e0)) == 7) {
-                        seventhImage.setBackgroundResource(R.drawable.e0);
-                    }
-
-            }
-        }
-        if(notes.get(R.drawable.gsharp) != null){
-            for(int i = 0; i<noteArray.size(); i++){
-                if(notes.get(R.drawable.gsharp)== noteArray.get(i))
-                    if (noteArray.indexOf(notes.get(R.drawable.gsharp)) == 1) {
-                        firstImage.setBackgroundResource(R.drawable.gsharp);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.gsharp)) == 2) {
-                        secondImage.setBackgroundResource(R.drawable.gsharp);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.gsharp)) == 3) {
-                        thirdImage.setBackgroundResource(R.drawable.gsharp);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.gsharp)) == 4) {
-                        fourthImage.setBackgroundResource(R.drawable.gsharp);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.gsharp)) == 5) {
-                        fifthImage.setBackgroundResource(R.drawable.gsharp);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.gsharp)) == 6) {
-                        sixthImage.setBackgroundResource(R.drawable.gsharp);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.gsharp)) == 7) {
-                        seventhImage.setBackgroundResource(R.drawable.gsharp);
-                    }
-                }
-        }
-        if(notes.get(R.drawable.csharp) != null){
-            for(int i = 0; i<noteArray.size(); i++){
-                if(notes.get(R.drawable.csharp)== noteArray.get(i))
-                    if (noteArray.indexOf(notes.get(R.drawable.csharp)) == 1) {
-                        firstImage.setBackgroundResource(R.drawable.csharp);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.csharp)) == 2) {
-                        secondImage.setBackgroundResource(R.drawable.csharp);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.csharp)) == 3) {
-                        thirdImage.setBackgroundResource(R.drawable.csharp);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.csharp)) == 4) {
-                        fourthImage.setBackgroundResource(R.drawable.csharp);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.csharp)) == 5) {
-                        fifthImage.setBackgroundResource(R.drawable.csharp);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.csharp)) == 6) {
-                        sixthImage.setBackgroundResource(R.drawable.csharp);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.csharp)) == 7) {
-                        seventhImage.setBackgroundResource(R.drawable.csharp);
-                    }
-            }
-        }
-        if(notes.get(R.drawable.f) != null){
-            for(int i = 0; i<noteArray.size(); i++){
-                if(notes.get(R.drawable.f)== noteArray.get(i))
-                    if (noteArray.indexOf(notes.get(R.drawable.f)) == 1) {
-                        firstImage.setBackgroundResource(R.drawable.f);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.f)) == 2) {
-                        secondImage.setBackgroundResource(R.drawable.f);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.f)) == 3) {
-                        thirdImage.setBackgroundResource(R.drawable.f);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.f)) == 4) {
-                        fourthImage.setBackgroundResource(R.drawable.f);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.f)) == 5) {
-                        fifthImage.setBackgroundResource(R.drawable.f);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.f)) == 6) {
-                        sixthImage.setBackgroundResource(R.drawable.f);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.f)) == 7) {
-                        seventhImage.setBackgroundResource(R.drawable.f);
-                    }
-                }
-        }
-        if(notes.get(R.drawable.f0) != null){
-            for(int i = 0; i<noteArray.size(); i++){
-                if(notes.get(R.drawable.f0)== noteArray.get(i))
-                    if (noteArray.indexOf(notes.get(R.drawable.f0)) == 1) {
-                        firstImage.setBackgroundResource(R.drawable.f0);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.f0)) == 2) {
-                        secondImage.setBackgroundResource(R.drawable.d0sharp);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.f0)) == 3) {
-                        thirdImage.setBackgroundResource(R.drawable.f0);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.f0)) == 4) {
-                        fourthImage.setBackgroundResource(R.drawable.f0);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.f0)) == 5) {
-                        fifthImage.setBackgroundResource(R.drawable.f0);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.f0)) == 6) {
-                        sixthImage.setBackgroundResource(R.drawable.f0);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.f0)) == 7) {
-                        seventhImage.setBackgroundResource(R.drawable.f0);
-                    }
-                }
-        }
-        if(notes.get(R.drawable.fsharp) != null){
-            for(int i = 0; i<noteArray.size(); i++)
-                if (notes.get(R.drawable.fsharp) == noteArray.get(i)) {
-                    if (noteArray.indexOf(notes.get(R.drawable.fsharp)) == 1) {
-                        firstImage.setBackgroundResource(R.drawable.fsharp);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.fsharp)) == 2) {
-                        secondImage.setBackgroundResource(R.drawable.fsharp);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.fsharp)) == 3) {
-                        thirdImage.setBackgroundResource(R.drawable.fsharp);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.fsharp)) == 4) {
-                        fourthImage.setBackgroundResource(R.drawable.fsharp);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.fsharp)) == 5) {
-                        fifthImage.setBackgroundResource(R.drawable.fsharp);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.fsharp)) == 6) {
-                        sixthImage.setBackgroundResource(R.drawable.fsharp);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.fsharp)) == 7) {
-                        seventhImage.setBackgroundResource(R.drawable.fsharp);
-                    }
-                }
-        }
-        if(notes.get(R.drawable.c) != null){
-            for(int i = 0; i<noteArray.size(); i++){
-                if(notes.get(R.drawable.c)== noteArray.get(i))
-                    if (noteArray.indexOf(notes.get(R.drawable.c)) == 1) {
-                        firstImage.setBackgroundResource(R.drawable.c);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.c)) == 2) {
-                        secondImage.setBackgroundResource(R.drawable.c);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.c)) == 3) {
-                        thirdImage.setBackgroundResource(R.drawable.c);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.c)) == 4) {
-                        fourthImage.setBackgroundResource(R.drawable.c);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.c)) == 5) {
-                        fifthImage.setBackgroundResource(R.drawable.c);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.c)) == 6) {
-                        sixthImage.setBackgroundResource(R.drawable.c);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.c)) == 7) {
-                        seventhImage.setBackgroundResource(R.drawable.c);
-                    }
-                }
-        }
-        if(notes.get(R.drawable.a) != null){
-            for(int i = 0; i<noteArray.size(); i++){
-                if(notes.get(R.drawable.a)== noteArray.get(i))
-                    if (noteArray.indexOf(notes.get(R.drawable.a)) == 1) {
-                        firstImage.setBackgroundResource(R.drawable.a);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.a)) == 2) {
-                        secondImage.setBackgroundResource(R.drawable.a);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.a)) == 3) {
-                        thirdImage.setBackgroundResource(R.drawable.a);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.a)) == 4) {
-                        fourthImage.setBackgroundResource(R.drawable.a);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.a)) == 5) {
-                        fifthImage.setBackgroundResource(R.drawable.a);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.a)) == 6) {
-                        sixthImage.setBackgroundResource(R.drawable.a);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.a)) == 7) {
-                        seventhImage.setBackgroundResource(R.drawable.a);
-                    }
-                }
-        }
-        if(notes.get(R.drawable.asharp) != null){
-            for(int i = 0; i<noteArray.size(); i++){
-                if(notes.get(R.drawable.asharp)== noteArray.get(i))
-                    if (noteArray.indexOf(notes.get(R.drawable.asharp)) == 1) {
-                        firstImage.setBackgroundResource(R.drawable.asharp);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.asharp)) == 2) {
-                        secondImage.setBackgroundResource(R.drawable.asharp);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.asharp)) == 3) {
-                        thirdImage.setBackgroundResource(R.drawable.asharp);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.asharp)) == 4) {
-                        fourthImage.setBackgroundResource(R.drawable.asharp);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.asharp)) == 5) {
-                        fifthImage.setBackgroundResource(R.drawable.asharp);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.asharp)) == 6) {
-                        sixthImage.setBackgroundResource(R.drawable.asharp);
-                    }
-                    if (noteArray.indexOf(notes.get(R.drawable.asharp)) == 7) {
-                        seventhImage.setBackgroundResource(R.drawable.asharp);
-                    }
-                }
-        }
 
     }
 
@@ -555,17 +209,91 @@ public class NotePage extends AppCompatActivity {
     private void createArray(){
         File noteDir = new File(Environment.getExternalStorageDirectory(),"Humposer Notes");
         textFile = new File(noteDir.getAbsolutePath()+File.separator+name);
-        try {
-            FileReader fileReader = new FileReader(textFile);
-            noteArray2.add(textFile);
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+        StringTokenizer st = new StringTokenizer(textFile.toString(),",");
+        while (st.hasMoreTokens()){
+            int convertToInt = Integer.parseInt(st.nextToken());
+            noteArray.add(convertToInt);
         }
-        System.out.println(noteArray2);
 
     }
 
+    private String convertStreamToString(InputStream is) throws Exception {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+        StringBuilder sb = new StringBuilder();
+        String line = null;
+        while ((line = reader.readLine()) != null) {
+            sb.append(line).append("\n");
+        }
+        reader.close();
+        return sb.toString();
+    }
 
+    private String getStringFromFile(String filePath) throws Exception {
+        file = new File(filePath);
+        FileInputStream fin = new FileInputStream(file);
+        ret = convertStreamToString(fin);
+        //Make sure you close all streams.
+        fin.close();
+        return ret;
+    }
+
+    private void displayImages() {
+//creates new framelayout
+        createNewLayout();
+        int counter = 0;
+        int p = 1;
+        int m = 1;
+        int c = ViewGroup.LayoutParams.WRAP_CONTENT;
+        int l = ViewGroup.LayoutParams.MATCH_PARENT;
+//creates new imageViews to add to framelayouts
+        for(int i=0;i<noteArray.size();i++)
+        {
+            ImageView image = new ImageView(this);
+            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(new android.view.ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+            params.topMargin=l;
+            params.leftMargin=c+c*m;
+            image.setMaxHeight(20);
+            image.setMaxWidth(20);
+            m++;
+
+            imageViews[counter]= image;
+
+            // Adds the view to the layout
+            frameLayout.addView(image, params);
+            counter++;
+
+            if(counter==7*p){
+                //sets loction differently
+                location+=60;
+                //creates new framelayout
+                createNewLayout();
+                p++;
+
+
+            }
+        }
+        int numberOfNotesPerLine = 7;
+        int placeNum = 0;
+        int imageNum = 0;
+        for (Integer note : noteArray) {
+            if (imageNum < numberOfNotesPerLine) {
+                Integer d = (Integer) notes.get(note);
+                imageViews[imageNum].setBackgroundResource(d);
+
+                imageNum++;
+            }
+
+
+        }
+
+    }
+    private void createNewLayout(){
+        LinearLayout linearLayout = (LinearLayout) findViewById(R.id.linLayout);
+        for (int j = 0; j < noteArray.size()/2; j++) {
+            frameLayout = new FrameLayout(this);
+            LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(new android.view.ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+            linearLayout.addView(frameLayout, params1);
+        }
+    }
 }
 

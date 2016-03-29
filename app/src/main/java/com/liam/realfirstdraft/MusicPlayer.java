@@ -30,7 +30,6 @@ import java.util.ArrayList;
 
 
 public class MusicPlayer extends AppCompatActivity {
-//    private float r;
     private String saveToFileName;
     private File songFile;
     private MediaPlayer mediaPlayer;
@@ -38,9 +37,7 @@ public class MusicPlayer extends AppCompatActivity {
     private int[] state;
     private int maxStates;
     private File extDirectory = new File(Environment.getExternalStorageDirectory(), "Humposer");
-//    private Complex[] complexData;
     private  TextView songNameText;
-//    private static final String[] list = {"Music","Sheet Music","Music Recorder","Music Player"};
     private ArrayList<Integer> noteInfo = new ArrayList<>();
     File file;
     ProgressBar progressBar;
@@ -277,118 +274,26 @@ public class MusicPlayer extends AppCompatActivity {
                           e.printStackTrace();
                       }
                       autoCorrelate(in);
+
+
                       progressBar.setVisibility(View.INVISIBLE);
 
+                      Bundle b = new Bundle();
+                      if(songFile.exists()){
+                          name = songFile.getName();
+                      }
+                      else{
+                          name = newFile.getName();
+                      }
+                      b.putString("Name", name);
+                      b.putIntegerArrayList("Notes", noteInfo);
+                      Intent p = new Intent(getBaseContext(), NotePage.class);
+                      p.putExtras(b);
+                      startActivity(p);
 
-/*
-                      if (in != null) {
-                          int read;
-                          byte[] buff = new byte[1024];
-                          try {
-                              while ((read = in.read(buff)) > 0) {
-                                  out.write(buff, 0, read);
-                              }
-                              out.flush();
-                          } catch (IOException e) {
-                              e.printStackTrace();
-                          }
-                          byte[] audioBytes = out.toByteArray(); // 587820
-
-                          int audiosize = (audioBytes.length - 44) / 4;  // 146944
-                          double[] realData = new double[audiosize];
-                          double[] imagData = new double[audiosize];
-
-                          for (int i = 44, r = 0; i < audioBytes.length; i += 4, r++) {
-                              byte[] rawbytes = new byte[2];
-
-                              rawbytes[0] = audioBytes[i];
-                              rawbytes[1] = audioBytes[i + 1];
-//                              for (int  j=2; j<8; j++) {
-//                                  rawbytes[j] = 0;
-//                              }
-
-                              Short audioValue = ByteBuffer.wrap(rawbytes).getShort();
-//                              System.out.println(r+" "+audioValue);
-                              realData[r] = audioValue.doubleValue();
-                              imagData[r] = 0d;
-                          }
-
-
-//                          double[] realDataL = new double[audiosize / 2]; // 73472
-//                          double[] realDataR = new double[audiosize / 2];
-//                          for (int i = 0, y = 0; i < realData.length; i += 2, y++) {
-//                              realDataL[y] = realData[i];
-//                              realDataR[y] = realData[i + 1];
-//                          }
-
-                          FFTbase fft = new FFTbase();
-
-                          int windowSize = 1024;
-                          int c = 0;
-                          while (c < realData.length) {
-                              double[] rdata = new double[windowSize];
-                              double[] idata = new double[windowSize];
-
-                              for (int i = 0; i < windowSize; i++) {
-                                  if (c + i < realData.length) {
-                                      rdata[i] = realData[c + i];
-                                  } else {
-                                      rdata[i] = 0;
-                                  }
-                                  idata[i] = 0;
-                              }
-
-                              double[] newarray = fft.fft(rdata, idata, true);
-
-
-                              //System.out.println(c);
-
-                              double maxVal = -1;
-                              int maxIndex = -1;
-                              float sum = 0;
-                              float sSum = 0;
-                              for (int j = 0; j < newarray.length; j += 2) {
-                                  double asd = newarray[j] * newarray[j] + newarray[j + 1] * newarray[j + 1];
-                                  if (asd > maxVal) {
-                                      maxVal = asd;
-                                      maxIndex = j;
-                                  }
-                                  if (j < 300) {
-                                      maxIndex = 0;
-
-
-                                  }
-
-                              }
-                                  float[] r = new float[newarray.length];
-                                  for (int i=0;i<newarray.length;i++) {
-                                      sum = 0;
-                                      for (int j=0;j<newarray.length-i;j++) {
-                                          sum+=maxIndex*maxVal;
-                                      }
-                                      r[i]=sum;
-                                  }
-
-
-                              System.out.println("\t" + c + "\t" + Math.sqrt(maxVal) + "\t" + maxIndex + "\t" + (sum/1.00E12)*100);
-                              c += windowSize;
-
-                              }
-
-                          }
-
-*/
                       }
 
 
-//                      File myFile = new File("/storage/emulated/0/Humposer/record_temp.raw");
-
-
-//
-//                      Complex[] complexData = new Complex[audioData.length];
-//                      for (int i = 0; i < complexData.length; i++) {
-//                          complexData[i] = new Complex(audioData[i], 0);
-//                      }
 
                   }
 
@@ -429,8 +334,8 @@ public class MusicPlayer extends AppCompatActivity {
 //        progressBar.setVisibility(View.VISIBLE);
 
         File noteDir = new File(Environment.getExternalStorageDirectory(),"Humposer Notes");
-        if (!noteDir.exists())
-            noteDir.mkdir();
+        if (!noteDir.exists()){
+            noteDir.mkdir();}
 
         int FREQ_RANGE = 128;
         float sampleRate = 44100;
@@ -495,15 +400,15 @@ public class MusicPlayer extends AppCompatActivity {
                         System.out.println("Value1\t" + note);
                         try {noteInfo.add(note);}
                         catch (RuntimeException e){}
-//                        if(songFile.exists()){
-//                            file = new File(noteDir.getAbsolutePath()+File.separator +songFile.getName()+"notes");
-//                        }
-//                        else {
-//                            file = new File(noteDir.getAbsolutePath()+File.separator +newFile.getName()+"notes");
-//                        }
-//
-//                        FileWriter write = new FileWriter(file);
-//                        write.write(note);
+                        if(songFile.exists()){
+                            file = new File(noteDir.getAbsolutePath()+File.separator +songFile.getName()+" notes");
+                        }
+                        else {
+                            file = new File(noteDir.getAbsolutePath()+File.separator +newFile.getName()+" notes");
+                        }
+
+                        FileWriter write = new FileWriter(file);
+                        write.write(note+",");
 
 
 
@@ -517,42 +422,27 @@ public class MusicPlayer extends AppCompatActivity {
                         System.out.println("Value2\t" + note);
                         try {noteInfo.add(note);}
                         catch (RuntimeException e){}
-//                        if(songFile.exists()){
-//                            file = new File(noteDir.getAbsolutePath()+File.separator +songFile.getName()+"notes");
-//                        }
-//                        else {
-//                            file = new File(noteDir.getAbsolutePath()+File.separator + newFile.getName()+"notes");
-//                        }
-//
-//                        FileWriter write = new FileWriter(file);
-//                        write.write(note);
+                        if(songFile.exists()){
+                            file = new File(noteDir.getAbsolutePath()+File.separator +songFile.getName()+" notes");
+                        }
+                        else {
+                            file = new File(noteDir.getAbsolutePath()+File.separator + newFile.getName()+" notes");
+                        }
+
+                        FileWriter write = new FileWriter(file);
+                        write.write(note+",");
 
                     }
                 }
 
 
-//                try { Thread.sleep(250); }catch( Exception e ){}
             }
 
-
-//            System.out.println(noteInfo);
             System.out.println("file = "+file);
             System.out.println(noteInfo);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Bundle b = new Bundle();
-        if(songFile.exists()){
-            name = songFile.getName();
-        }
-        else{
-            name = newFile.getName();
-        }
-        b.putString("Name",name);
-        b.putIntegerArrayList("Notes", noteInfo);
-        Intent p = new Intent(getBaseContext(), NotePage.class);
-        p.putExtras(b);
-        startActivity(p);
 
     }
 
