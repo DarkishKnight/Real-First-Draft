@@ -9,6 +9,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v4.media.IMediaBrowserServiceCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,16 +43,14 @@ public class NotePage extends AppCompatActivity {
     Map<Integer, Object> notes = new HashMap<Integer, Object>();
     ArrayList<Integer> noteImage = new ArrayList<>();
     ArrayList<Integer> noteArray = new ArrayList<>();
-    ArrayList<File> noteArray2 = new ArrayList<>();
     ImageView[] imageViews;
     File textFile;
     String name;
     String fileToDelete;
-    File noteDir;
     File file;
     FrameLayout frameLayout;
-    int location = 60;
     String ret;
+    FrameLayout[] frames;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +81,7 @@ public class NotePage extends AppCompatActivity {
 
 
         imageViews = new ImageView[noteArray.size()];
+        frames = new FrameLayout[noteArray.size()/3];
 //        imageViews[6] = (ImageView) findViewById(R.id.image7);
 //        imageViews[5] = (ImageView) findViewById(R.id.image6);
 //        imageViews[4] = (ImageView) findViewById(R.id.image5);
@@ -245,35 +245,31 @@ public class NotePage extends AppCompatActivity {
         int m = 1;
         int c = ViewGroup.LayoutParams.WRAP_CONTENT;
         int l = ViewGroup.LayoutParams.MATCH_PARENT;
+        int layoutNumber = 0;
 //creates new imageViews to add to framelayouts
         for(int i=0;i<noteArray.size();i++)
         {
             ImageView image = new ImageView(this);
             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(new android.view.ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
             params.topMargin=l;
-            params.leftMargin=c+c*m;
+            params.leftMargin= (int) (c+47.333*m);
             image.setMaxHeight(20);
             image.setMaxWidth(20);
             m++;
-
             imageViews[counter]= image;
-
             // Adds the view to the layout
-            frameLayout.addView(image, params);
+            frames[layoutNumber].addView(image, params);
             counter++;
-
             if(counter==7*p){
-                //sets loction differently
-                location+=60;
                 //creates new framelayout
+                layoutNumber++;
                 createNewLayout();
-                p++;
-
 
             }
+            p++;
         }
         int numberOfNotesPerLine = 7;
-        int placeNum = 0;
+        int w = 1;
         int imageNum = 0;
         for (Integer note : noteArray) {
             if (imageNum < numberOfNotesPerLine) {
@@ -282,6 +278,10 @@ public class NotePage extends AppCompatActivity {
 
                 imageNum++;
             }
+            if (imageNum > numberOfNotesPerLine*w){
+                Integer d = (Integer) notes.get(note);
+                imageViews[imageNum].setBackgroundResource(d);
+            }
 
 
         }
@@ -289,10 +289,14 @@ public class NotePage extends AppCompatActivity {
     }
     private void createNewLayout(){
         LinearLayout linearLayout = (LinearLayout) findViewById(R.id.linLayout);
+        int x =  1;
+        int counter1 = 0;
         for (int j = 0; j < noteArray.size()/2; j++) {
             frameLayout = new FrameLayout(this);
             LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(new android.view.ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+            params1.topMargin = 1+100*x;
             linearLayout.addView(frameLayout, params1);
+            frames[counter1] = frameLayout;
         }
     }
 }
