@@ -40,7 +40,7 @@ import java.util.*;
 
 
 public class NotePage extends AppCompatActivity {
-    Map<Integer, Object> notes = new HashMap<Integer, Object>();
+    Map<Integer, Object> notes = new HashMap<>();
     ArrayList<Integer> noteImage = new ArrayList<>();
     ArrayList<Integer> noteArray = new ArrayList<>();
     ImageView[] imageViews;
@@ -48,7 +48,6 @@ public class NotePage extends AppCompatActivity {
     String name;
     String fileToDelete;
     File file;
-    FrameLayout frameLayout;
     String ret;
     FrameLayout[] frames;
 
@@ -81,7 +80,7 @@ public class NotePage extends AppCompatActivity {
 
 
         imageViews = new ImageView[noteArray.size()];
-        frames = new FrameLayout[noteArray.size()/3];
+        frames = new FrameLayout[noteArray.size()];
 //        imageViews[6] = (ImageView) findViewById(R.id.image7);
 //        imageViews[5] = (ImageView) findViewById(R.id.image6);
 //        imageViews[4] = (ImageView) findViewById(R.id.image5);
@@ -241,47 +240,49 @@ public class NotePage extends AppCompatActivity {
 //creates new framelayout
         createNewLayout();
         int counter = 0;
+        int m = 0;
         int p = 1;
-        int m = 1;
         int c = ViewGroup.LayoutParams.WRAP_CONTENT;
         int l = ViewGroup.LayoutParams.MATCH_PARENT;
         int layoutNumber = 0;
+        int q = 0;
 //creates new imageViews to add to framelayouts
         for(int i=0;i<noteArray.size();i++)
         {
             ImageView image = new ImageView(this);
             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(new android.view.ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-            params.topMargin=l;
-            params.leftMargin= (int) (c+47.333*m);
+            params.topMargin=l+230*q;
+            params.leftMargin=(c+47*m);
             image.setMaxHeight(20);
             image.setMaxWidth(20);
             m++;
             imageViews[counter]= image;
             // Adds the view to the layout
-            frames[layoutNumber].addView(image, params);
-            counter++;
-            if(counter==7*p){
-                //creates new framelayout
-                layoutNumber++;
-                createNewLayout();
-
+            if (counter != 9*p) {
+                frames[layoutNumber].addView(image, params);
             }
-            p++;
+            counter++;
+            if(counter==9*p){
+//                layoutNumber++;
+//                frames[layoutNumber].addView(image, params);
+                q++;
+                p++;
+                m=0;
+            }
+
+
+
         }
-        int numberOfNotesPerLine = 7;
-        int w = 1;
+//        int numberOfNotesPerLine = 7;
         int imageNum = 0;
         for (Integer note : noteArray) {
-            if (imageNum < numberOfNotesPerLine) {
+            if (imageNum <= noteArray.size()) {
                 Integer d = (Integer) notes.get(note);
                 imageViews[imageNum].setBackgroundResource(d);
 
                 imageNum++;
             }
-            if (imageNum > numberOfNotesPerLine*w){
-                Integer d = (Integer) notes.get(note);
-                imageViews[imageNum].setBackgroundResource(d);
-            }
+
 
 
         }
@@ -289,14 +290,16 @@ public class NotePage extends AppCompatActivity {
     }
     private void createNewLayout(){
         LinearLayout linearLayout = (LinearLayout) findViewById(R.id.linLayout);
-        int x =  1;
+        int x =  0;
         int counter1 = 0;
-        for (int j = 0; j < noteArray.size()/2; j++) {
-            frameLayout = new FrameLayout(this);
+        for(int i = 0; i<=1; i++) {
+            FrameLayout frameLayout = new FrameLayout(this);
             LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(new android.view.ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-            params1.topMargin = 1+100*x;
-            linearLayout.addView(frameLayout, params1);
+            params1.topMargin = 1 + 100 * x;
             frames[counter1] = frameLayout;
+            linearLayout.addView(frameLayout, params1);
+            x++;
+            counter1++;
         }
     }
 }
