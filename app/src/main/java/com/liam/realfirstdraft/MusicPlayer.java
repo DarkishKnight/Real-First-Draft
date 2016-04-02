@@ -400,21 +400,6 @@ public class MusicPlayer extends AppCompatActivity {
                         System.out.println("Value1\t" + note);
                         try {noteInfo.add(note);}
                         catch (RuntimeException e){}
-                        if(songFile.exists()){
-                            file = new File(noteDir.getAbsolutePath()+File.separator +songFile.getName()+" notes");
-                        }
-                        else {
-                            file = new File(noteDir.getAbsolutePath()+File.separator +newFile.getName()+" notes");
-                        }
-
-                        FileWriter write = new FileWriter(file);
-                        write.write(note+",");
-
-
-
-
-
-
                     }
                     else {
                         double nextFreq = FREQUENCIES[note-1];
@@ -422,21 +407,24 @@ public class MusicPlayer extends AppCompatActivity {
                         System.out.println("Value2\t" + note);
                         try {noteInfo.add(note);}
                         catch (RuntimeException e){}
-                        if(songFile.exists()){
-                            file = new File(noteDir.getAbsolutePath()+File.separator +songFile.getName()+" notes");
-                        }
-                        else {
-                            file = new File(noteDir.getAbsolutePath()+File.separator + newFile.getName()+" notes");
-                        }
-
-                        FileWriter write = new FileWriter(file);
-                        write.write(note+",");
-
                     }
                 }
 
 
             }
+
+            if(songFile.exists()){
+                file = new File(noteDir.getAbsolutePath()+File.separator +songFile.getName()+"notes");
+            }
+            else {
+                file = new File(noteDir.getAbsolutePath()+File.separator +newFile.getName()+"notes");
+            }
+
+            FileWriter write = new FileWriter(file);
+            String csvNotes = android.text.TextUtils.join(",",noteInfo);
+            System.out.println("csvNotes = "+csvNotes);
+            write.write(csvNotes+"\n");
+            write.close();
 
             System.out.println("file = "+file);
             System.out.println(noteInfo);

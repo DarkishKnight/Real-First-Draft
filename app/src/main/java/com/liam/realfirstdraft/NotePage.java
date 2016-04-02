@@ -1,15 +1,12 @@
 package com.liam.realfirstdraft;
 
 import android.annotation.TargetApi;
-import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.provider.MediaStore;
-import android.support.v4.media.IMediaBrowserServiceCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,34 +16,27 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.StringTokenizer;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
-import java.util.*;
 
 
 public class NotePage extends AppCompatActivity {
     Map<Integer, Object> notes = new HashMap<>();
-    ArrayList<Integer> noteImage = new ArrayList<>();
-    ArrayList<Integer> noteArray = new ArrayList<>();
+    ArrayList<Integer> noteArray = null;
     ImageView[] imageViews;
     File textFile;
     String name;
-    String fileToDelete;
+    String arrayFile;
     File file;
     String ret;
     FrameLayout[] frames;
@@ -56,42 +46,48 @@ public class NotePage extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_note_page);
 
-        fileToDelete = getIntent().getExtras().getString("listItem");
         if(getIntent()!=null && getIntent().getExtras()!= null){
            noteArray = getIntent().getExtras().getIntegerArrayList("Notes");
         }
 
-//        if(getIntent()== null || getIntent().getExtras().getString("Notes")==null){
-//            try {
-//                getStringFromFile(noteDir.getAbsolutePath()+File.separator + fileToDelete);
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//            noteDir = new File(Environment.getExternalStorageDirectory(),"Humposer Notes");
-//            file = new File(noteDir.getAbsolutePath()+File.separator + fileToDelete);
-//            StringTokenizer st = new StringTokenizer(ret,",");
-//            while (st.hasMoreTokens()){
-//                int convertToInt = Integer.parseInt(st.nextToken());
-//                noteArray.add(convertToInt);
-//            }
-//        }
+        if (noteArray == null) {
+            noteArray = new ArrayList<Integer>();
+
+            arrayFile = getIntent().getExtras().getString("listItem");
+
+            if (arrayFile != null) {
+                File noteDir = new File(Environment.getExternalStorageDirectory(), "Humposer Notes");
+                file = new File(noteDir.getAbsolutePath() + File.separator + arrayFile);
+
+                String line = null;
+
+                try {
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+                    line = reader.readLine();
+                    System.out.println(line);
+                    reader.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                if (line != null) {
+                    StringTokenizer st = new StringTokenizer(line, ",");
+                    while (st.hasMoreTokens()) {
+                        int convertToInt = Integer.parseInt(st.nextToken());
+                        noteArray.add(convertToInt);
+                    }
+                }
+            }
+        }
+
         name = getIntent().getExtras().getString("Name");
 
+        if (noteArray != null) {
+            imageViews = new ImageView[noteArray.size()];
+            frames = new FrameLayout[noteArray.size()];
 
-
-        imageViews = new ImageView[noteArray.size()];
-        frames = new FrameLayout[noteArray.size()];
-//        imageViews[6] = (ImageView) findViewById(R.id.image7);
-//        imageViews[5] = (ImageView) findViewById(R.id.image6);
-//        imageViews[4] = (ImageView) findViewById(R.id.image5);
-//        imageViews[3] = (ImageView) findViewById(R.id.image4);
-//        imageViews[2] = (ImageView) findViewById(R.id.image3);
-//        imageViews[1] = (ImageView) findViewById(R.id.image2);
-//        imageViews[0] = (ImageView) findViewById(R.id.image1);
-
-        addingQuarterNotesToArray();
-//        saveNoteArray();
-
+            addingQuarterNotesToArray();
+        }
 
 
         TextView title = (TextView) findViewById(R.id.Title);
@@ -148,25 +144,15 @@ public class NotePage extends AppCompatActivity {
         ImageButton sheetMusic = (ImageButton) findViewById(R.id.sheetMusicButton);
 
         sheetMusic.setOnClickListener(
-                new ImageButton.OnClickListener(){
+                new ImageButton.OnClickListener() {
                     @Override
-                public void onClick(View v){
+                    public void onClick(View v) {
                         Intent a = new Intent(getBaseContext(), SheetMusic.class);
                         startActivity(a);
                     }
                 }
         );
-        noteImage.add(R.drawable.a);
-        noteImage.add(R.drawable.b);
-        noteImage.add(R.drawable.c);
-        noteImage.add(R.drawable.d);
-        noteImage.add(R.drawable.e);
-        noteImage.add(R.drawable.f);
-        noteImage.add(R.drawable.g1);
-        noteImage.add(R.drawable.g0);
-        noteImage.add(R.drawable.f0);
-        noteImage.add(R.drawable.d0);
-        noteImage.add(R.drawable.e0);
+
 
 
 
@@ -174,67 +160,11 @@ public class NotePage extends AppCompatActivity {
     }
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private void addingQuarterNotesToArray(){
-        notes.put(14, R.drawable.dsharp);
-        notes.put(13, R.drawable.e);
-        notes.put(12, R.drawable.f);
-        notes.put(11, R.drawable.fsharp);
-        notes.put(10, R.drawable.g1);
-        notes.put(9, R.drawable.gsharp);
-        notes.put(8, R.drawable.a);
-        notes.put(7, R.drawable.asharp);
-        notes.put(6, R.drawable.b);
-        notes.put(5, R.drawable.c);
-        notes.put(4, R.drawable.csharp);
-        notes.put(3, R.drawable.d0);
-        notes.put(2, R.drawable.d0sharp);
-        notes.put(1, R.drawable.e0);
-        notes.put(0, R.drawable.f0);
-
+        quarternoteDrawables();
         displayImages();
-
-
     }
 
-    private void saveNoteArray(){
-        try {
-            BufferedWriter outputWriter = new BufferedWriter(new FileWriter(textFile));
-            outputWriter.write(noteArray.toString());
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.out.println(textFile);
-        }
-    }
 
-    private void createArray(){
-        File noteDir = new File(Environment.getExternalStorageDirectory(),"Humposer Notes");
-        textFile = new File(noteDir.getAbsolutePath()+File.separator+name);
-        StringTokenizer st = new StringTokenizer(textFile.toString(),",");
-        while (st.hasMoreTokens()){
-            int convertToInt = Integer.parseInt(st.nextToken());
-            noteArray.add(convertToInt);
-        }
-
-    }
-
-    private String convertStreamToString(InputStream is) throws Exception {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-        StringBuilder sb = new StringBuilder();
-        String line = null;
-        while ((line = reader.readLine()) != null) {
-            sb.append(line).append("\n");
-        }
-        reader.close();
-        return sb.toString();
-    }
-
-    private String getStringFromFile(String filePath) throws Exception {
-        file = new File(filePath);
-        FileInputStream fin = new FileInputStream(file);
-        ret = convertStreamToString(fin);
-        //Make sure you close all streams.
-        fin.close();
-        return ret;
-    }
 
     private void displayImages() {
 //creates new framelayout
@@ -282,12 +212,32 @@ public class NotePage extends AppCompatActivity {
 
                 imageNum++;
             }
+//                if(noteArray.get(note) == noteArray.get(note-1)) {
+//                    halfnoteDrawables();
+//                    Integer d = (Integer) notes.get(note);
+//                    imageViews[imageNum].setBackgroundResource(d);
+//                }
+
+
 
 
 
         }
+//        Bitmap mainBitmap = ((BitmapDrawable)imageViews[0].getDrawable()).getBitmap().copy(Bitmap.Config.ARGB_8888, true);
+//        Canvas canvas = new Canvas(mainBitmap);
+//        canvas.drawBitmap(mainBitmap.copy(), 1, 1, null);
+//        canvas.drawBitmap(bmp1.copy(Bitmap.Config.ARGB_8888, true), 1, 1, null);
+//
+//        OutputStream os = null;
+//        try {
+//            os = new FileOutputStream("/sdcard/DCIM/Camera/myImages.png");
+//            mainBitmap.compress(Bitmap.CompressFormat.PNG, 50, os);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
 
     }
+
     private void createNewLayout(){
         LinearLayout linearLayout = (LinearLayout) findViewById(R.id.linLayout);
         int x =  0;
@@ -301,6 +251,59 @@ public class NotePage extends AppCompatActivity {
             x++;
             counter1++;
         }
+    }
+
+    private void quarternoteDrawables(){
+        notes.put(14, R.drawable.dsharp);
+        notes.put(13, R.drawable.e);
+        notes.put(12, R.drawable.f);
+        notes.put(11, R.drawable.fsharp);
+        notes.put(10, R.drawable.g0);
+        notes.put(9, R.drawable.g0sharp);
+        notes.put(8, R.drawable.a);
+        notes.put(7, R.drawable.asharp);
+        notes.put(6, R.drawable.b);
+        notes.put(5, R.drawable.c);
+        notes.put(4, R.drawable.csharp);
+        notes.put(3, R.drawable.d0);
+        notes.put(2, R.drawable.d0sharp);
+        notes.put(1, R.drawable.e0);
+        notes.put(0, R.drawable.f0);
+    }
+
+    private void halfnoteDrawables(){
+        notes.put(14, R.drawable.dsharphalf);
+        notes.put(13, R.drawable.ehalf);
+        notes.put(12, R.drawable.fhalf);
+        notes.put(11, R.drawable.fsharp);
+        notes.put(10, R.drawable.g0half);
+        notes.put(9, R.drawable.g0sharphalf);
+        notes.put(8, R.drawable.ahalf);
+        notes.put(7, R.drawable.asharphalf);
+        notes.put(6, R.drawable.bhalf);
+        notes.put(5, R.drawable.chalf);
+        notes.put(4, R.drawable.csharphalf);
+        notes.put(3, R.drawable.d0half);
+        notes.put(2, R.drawable.d0sharphalf);
+        notes.put(1, R.drawable.e0half);
+        notes.put(0, R.drawable.f0half);
+    }
+    private void wholenoteDrawable(){
+        notes.put(14, R.drawable.dsharpwhole);
+        notes.put(13, R.drawable.ewhole);
+        notes.put(12, R.drawable.fwhole);
+        notes.put(11, R.drawable.fsharpwhole);
+        notes.put(10, R.drawable.g0whole);
+        notes.put(9, R.drawable.g0sharpwhole);
+        notes.put(8, R.drawable.awhole);
+        notes.put(7, R.drawable.asharpwhole);
+        notes.put(6, R.drawable.bwhole);
+        notes.put(5, R.drawable.cwhole);
+        notes.put(4, R.drawable.csharpwhole);
+        notes.put(3, R.drawable.d0whole);
+        notes.put(2, R.drawable.d0sharpwhole);
+        notes.put(1, R.drawable.e0whole);
+        notes.put(0, R.drawable.f0whole);
     }
 }
 
