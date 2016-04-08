@@ -16,29 +16,24 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.StringTokenizer;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 
 public class NotePage extends AppCompatActivity {
     Map<Integer, Object> notes = new HashMap<>();
     ArrayList<Integer> noteArray = null;
     ImageView[] imageViews;
-    File textFile;
     String name;
     String arrayFile;
     File file;
-    String ret;
     FrameLayout[] frames;
 
     @Override
@@ -46,12 +41,16 @@ public class NotePage extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_note_page);
 
+        name = getIntent().getExtras().getString("Name");
+
         if(getIntent()!=null && getIntent().getExtras()!= null){
            noteArray = getIntent().getExtras().getIntegerArrayList("Notes");
+            File noteDir = new File(Environment.getExternalStorageDirectory(),"Humposer Notes");
+            file = new File(noteDir.getAbsolutePath()+File.separator+name);
         }
 
         if (noteArray == null) {
-            noteArray = new ArrayList<Integer>();
+            noteArray = new ArrayList<>();
 
             arrayFile = getIntent().getExtras().getString("listItem");
 
@@ -64,7 +63,6 @@ public class NotePage extends AppCompatActivity {
                 try {
                     BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
                     line = reader.readLine();
-                    System.out.println(line);
                     reader.close();
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -80,7 +78,7 @@ public class NotePage extends AppCompatActivity {
             }
         }
 
-        name = getIntent().getExtras().getString("Name");
+
 
         if (noteArray != null) {
             imageViews = new ImageView[noteArray.size()];
@@ -177,29 +175,27 @@ public class NotePage extends AppCompatActivity {
         int layoutNumber = 0;
         int q = 0;
 //creates new imageViews to add to framelayouts
-        for(int i=0;i<noteArray.size();i++)
-        {
+        for (int i = 0; i < noteArray.size(); i++) {
             ImageView image = new ImageView(this);
-            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(new android.view.ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-            params.topMargin=l+230*q;
-            params.leftMargin=(c+47*m);
+            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+            params.topMargin = l + 230 * q;
+            params.leftMargin = (c + 47 * m);
             image.setMaxHeight(20);
             image.setMaxWidth(20);
             m++;
-            imageViews[counter]= image;
+            imageViews[counter] = image;
             // Adds the view to the layout
-            if (counter != 9*p) {
+            if (counter != 9 * p) {
                 frames[layoutNumber].addView(image, params);
             }
             counter++;
-            if(counter==9*p){
+            if (counter == 9 * p) {
 //                layoutNumber++;
 //                frames[layoutNumber].addView(image, params);
                 q++;
                 p++;
-                m=0;
+                m = 0;
             }
-
 
 
         }
@@ -212,30 +208,9 @@ public class NotePage extends AppCompatActivity {
 
                 imageNum++;
             }
-//                if(noteArray.get(note) == noteArray.get(note-1)) {
-//                    halfnoteDrawables();
-//                    Integer d = (Integer) notes.get(note);
-//                    imageViews[imageNum].setBackgroundResource(d);
-//                }
-
-
-
 
 
         }
-//        Bitmap mainBitmap = ((BitmapDrawable)imageViews[0].getDrawable()).getBitmap().copy(Bitmap.Config.ARGB_8888, true);
-//        Canvas canvas = new Canvas(mainBitmap);
-//        canvas.drawBitmap(mainBitmap.copy(), 1, 1, null);
-//        canvas.drawBitmap(bmp1.copy(Bitmap.Config.ARGB_8888, true), 1, 1, null);
-//
-//        OutputStream os = null;
-//        try {
-//            os = new FileOutputStream("/sdcard/DCIM/Camera/myImages.png");
-//            mainBitmap.compress(Bitmap.CompressFormat.PNG, 50, os);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-
     }
 
     private void createNewLayout(){
@@ -244,7 +219,7 @@ public class NotePage extends AppCompatActivity {
         int counter1 = 0;
         for(int i = 0; i<=1; i++) {
             FrameLayout frameLayout = new FrameLayout(this);
-            LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(new android.view.ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+            LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
             params1.topMargin = 1 + 100 * x;
             frames[counter1] = frameLayout;
             linearLayout.addView(frameLayout, params1);

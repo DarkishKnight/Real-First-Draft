@@ -4,20 +4,20 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.AnimationDrawable;
+import android.media.MediaRecorder;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.media.MediaRecorder;
-import android.os.Environment;
 import android.widget.RelativeLayout;
+
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
 
 
 public class RecorderPage extends AppCompatActivity {

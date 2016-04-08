@@ -17,15 +17,12 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
 
@@ -123,6 +120,10 @@ public class MusicPlayer extends AppCompatActivity {
                           public void onClick(DialogInterface dialog, int which) {
                               songFile.getAbsoluteFile().delete();
                               Intent x = new Intent(getBaseContext(), MusicPage.class);
+                              if(mediaPlayer.isPlaying()){
+                                  mediaPlayer.stop();
+                                  mediaPlayer.release();
+                              }
                               startActivity(x);
                           }
                       });
@@ -392,21 +393,19 @@ public class MusicPlayer extends AppCompatActivity {
 
                     frequency = normaliseFreq(frequency);
                     int note = closestNote(frequency);
-                    int value = 0;
+//                    int value = 0;
                     double matchFreq = FREQUENCIES[note];
                     if ( frequency < matchFreq ) {
-                        double prevFreq = FREQUENCIES[note+1];
-                        value = (int)(-FREQ_RANGE*(frequency-matchFreq)/(prevFreq-matchFreq));
-                        System.out.println("Value1\t" + note);
+//                        double prevFreq = FREQUENCIES[note+1];
+//                        value = (int)(-FREQ_RANGE*(frequency-matchFreq)/(prevFreq-matchFreq));
                         try {noteInfo.add(note);}
-                        catch (RuntimeException e){}
+                        catch (RuntimeException ignored){}
                     }
                     else {
-                        double nextFreq = FREQUENCIES[note-1];
-                        value = (int)(FREQ_RANGE*(frequency-matchFreq)/(nextFreq-matchFreq));
-                        System.out.println("Value2\t" + note);
+//                        double nextFreq = FREQUENCIES[note-1];
+//                        value = (int)(FREQ_RANGE*(frequency-matchFreq)/(nextFreq-matchFreq));
                         try {noteInfo.add(note);}
-                        catch (RuntimeException e){}
+                        catch (RuntimeException ignored){}
                     }
                 }
 
@@ -422,12 +421,10 @@ public class MusicPlayer extends AppCompatActivity {
 
             FileWriter write = new FileWriter(file);
             String csvNotes = android.text.TextUtils.join(",",noteInfo);
-            System.out.println("csvNotes = "+csvNotes);
-            write.write(csvNotes+"\n");
+            write.write(csvNotes + "\n");
             write.close();
 
-            System.out.println("file = "+file);
-            System.out.println(noteInfo);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
