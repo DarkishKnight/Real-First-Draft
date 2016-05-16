@@ -1,4 +1,4 @@
-package com.liam.realfirstdraft;
+package com.liam.realfirstdraft.;
 
 import org.junit.Test;
 

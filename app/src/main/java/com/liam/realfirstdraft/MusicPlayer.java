@@ -26,7 +26,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 
-public class MusicPlayer extends AppCompatActivity {
+public class MusicPlayer extends AppcompatActivity {
     private String saveToFileName;
     private File songFile;
     private MediaPlayer mediaPlayer;
@@ -120,11 +120,15 @@ public class MusicPlayer extends AppCompatActivity {
                           public void onClick(DialogInterface dialog, int which) {
                               songFile.getAbsoluteFile().delete();
                               Intent x = new Intent(getBaseContext(), MusicPage.class);
-                              if(mediaPlayer.isPlaying()){
-                                  mediaPlayer.stop();
-                                  mediaPlayer.release();
+                              if (mediaPlayer != null) {
+                                  if (mediaPlayer.isPlaying()) {
+                                      mediaPlayer.stop();
+                                      startActivity(x);
+                                  }
                               }
-                              startActivity(x);
+                              else{
+                                  startActivity(x);
+                              }
                           }
                       });
                       maker.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -341,7 +345,7 @@ public class MusicPlayer extends AppCompatActivity {
         int FREQ_RANGE = 128;
         float sampleRate = 44100;
 
-        byte[] buffer = new byte[2*9600];
+        byte[] buffer = new byte[2*4800];
         int[] a = new int[buffer.length/2];
 
         int n = -1;
