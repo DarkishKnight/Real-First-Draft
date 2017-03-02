@@ -13,7 +13,6 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.io.BufferedInputStream;
@@ -26,18 +25,16 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 
-public class MusicPlayer extends AppcompatActivity {
+public class MusicPlayer extends AppCompatActivity {
     private String saveToFileName;
     private File songFile;
     private MediaPlayer mediaPlayer;
     private File newFile;
-    private int[] state;
-    private int maxStates;
     private File extDirectory = new File(Environment.getExternalStorageDirectory(), "Humposer");
     private  TextView songNameText;
     private ArrayList<Integer> noteInfo = new ArrayList<>();
+    private TextView hold;
     File file;
-    ProgressBar progressBar;
     String name;
 
 
@@ -64,11 +61,13 @@ public class MusicPlayer extends AppcompatActivity {
       super.onCreate(savedInstanceState);
       setContentView(R.layout.activity_music_player);
 //        activityList();
-      progressBar = (ProgressBar) findViewById(R.id.progressBar);
-      progressBar.setVisibility(View.INVISIBLE);
+      hold = (TextView) findViewById(R.id.pleaseHold);
+      assert hold != null;
+      hold.setVisibility(View.INVISIBLE);
 
       final String id = getIntent().getExtras().getString("listItem");
       songNameText = (TextView) findViewById(R.id.songNameText);
+      assert songNameText != null;
       songNameText.setText(id);
       songFile = new File(extDirectory + File.separator + id);
       newFile = new File(songFile.getParent() + File.separator + saveToFileName);
@@ -76,6 +75,7 @@ public class MusicPlayer extends AppcompatActivity {
 
       ImageButton backButton2 = (ImageButton) findViewById(R.id.backButton2);
 
+      assert backButton2 != null;
       backButton2.setOnClickListener(
               new ImageButton.OnClickListener()
 
@@ -91,6 +91,7 @@ public class MusicPlayer extends AppcompatActivity {
 
       ImageButton musicPage = (ImageButton) findViewById(R.id.torecorderpage);
 
+      assert musicPage != null;
       musicPage.setOnClickListener(
               new ImageButton.OnClickListener()
 
@@ -108,6 +109,7 @@ public class MusicPlayer extends AppcompatActivity {
 //Button
 
       ImageButton deleteButton = (ImageButton) findViewById(R.id.deleteButton);
+      assert deleteButton != null;
       deleteButton.setOnClickListener(
               new ImageButton.OnClickListener() {
                   @Override
@@ -147,11 +149,12 @@ public class MusicPlayer extends AppcompatActivity {
       //button
 
       final ImageButton playButton = (ImageButton) findViewById(R.id.playButton);
-      state = new int[]{0};
-      maxStates = 2;
+      int[] state = new int[]{0};
+      int maxStates = 2;
 
       final int[] finalState = state;
       final int finalMaxStates = maxStates;
+      assert playButton != null;
       playButton.setOnClickListener(
               new ImageButton.OnClickListener() {
                   @Override
@@ -203,6 +206,7 @@ public class MusicPlayer extends AppcompatActivity {
 
 //Botton
       ImageButton renameButton = (ImageButton) findViewById(R.id.renameButton);
+      assert renameButton != null;
       renameButton.setOnClickListener(
               new ImageButton.OnClickListener() {
                   @Override
@@ -264,11 +268,13 @@ public class MusicPlayer extends AppcompatActivity {
               }
       );
       ImageButton fftButton = (ImageButton) findViewById(R.id.fftButton);
+      assert fftButton != null;
       fftButton.setOnClickListener(
               new ImageButton.OnClickListener() {
                   @Override
                   public void onClick(View v) {
-                      progressBar.setVisibility(View.VISIBLE);
+                      hold.setVisibility(View.VISIBLE);
+
                       System.out.println("Selected file = " + songFile.getAbsolutePath());
 
                       ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -279,9 +285,6 @@ public class MusicPlayer extends AppcompatActivity {
                           e.printStackTrace();
                       }
                       autoCorrelate(in);
-
-
-                      progressBar.setVisibility(View.INVISIBLE);
 
                       Bundle b = new Bundle();
                       if(songFile.exists()){
@@ -306,6 +309,28 @@ public class MusicPlayer extends AppcompatActivity {
   }
     private static final double[] FREQUENCIES = { 174.61, 164.81, 155.56, 146.83, 138.59, 130.81, 123.47, 116.54, 110.00, 103.83, 98.00, 92.50, 87.31, 82.41, 77.78};
     private static final String[] NAME = { "F",    "E",    "D#",   "D",    "C#",   "C",    "B",    "A#",   "A",    "G#",   "G",   "F#",  "F",   "E",   "D#"};
+//    private static final double[] FREQUENCIES =
+//        {29.14, 30.87,
+//        32.70, 34.65, 36.71, 38.89, 41.20, 43.65, 46.25, 49.00, 51.91, 55.00, 58.27, 61.74,
+//        65.41, 69.30, 73.42, 77.78, 82.41, 87.31, 92.50, 98.00, 103.83, 110.00, 116.54, 123.47,
+//        130.81, 138.59, 146.83, 155.56, 164.81, 174.61, 185.00, 196.00, 207.65, 220.00, 233.08, 246.94,
+//        261.63, 277.18, 293.66, 311.13, 329.63, 349.23, 369.99, 392.00, 415.30, 440.00, 466.16, 493.88,
+//        523.25, 554.37, 587.33, 622.25, 659.25, 698.46, 739.99, 783.99, 830.61, 880.00, 932.33, 987.77,
+//        1046.50, 1108.73, 1174.66, 1244.51, 1318.51, 1396.91, 1479.98, 1567.98, 1661.22, 1760.00, 1864.66, 1975.53,
+//        2093.00, 2217.46, 2349.32, 2489.02, 2637.02, 2793.83, 2959.96, 3135.96, 3322.44, 3520.00, 3729.31, 3951.07,
+//        4186.01};
+//
+//
+//    private static final String[] NAME =
+//            {"A0#","B0",
+//            "C1","C1#","D1","D1#","E1","F1","F1#","G1","G1#","A1","A1#","B1",
+//            "C2","C2#","D2","D2#","E2","F2","F2#","G2","G2#","A2","A2#","B2",
+//            "C3","C3#","D3","D3#","E3","F3","F3#","G3","G3#","A3","A3#","B3",
+//            "C4","C4#","D4","D4#","E4","F4","F4#","G4","G4#","A4","A4#","B4",
+//            "C5","C5#","D5","D5#","E5","F5","F5#","G5","G5#","A5","A5#","B5",
+//            "C6","C6#","D6","D6#","E6","F6","F6#","G6","G6#","A6","A6#","B6",
+//            "C7","C7#","D7","D7#","E7","F7","F7#","G7","G7#","A7","A7#","B7",
+//            "C8"};
 
     private static double normaliseFreq(double hz) {
         // get hz into a standard range to make things easier to deal with
@@ -397,17 +422,17 @@ public class MusicPlayer extends AppcompatActivity {
 
                     frequency = normaliseFreq(frequency);
                     int note = closestNote(frequency);
-//                    int value = 0;
+                    int value = 0;
                     double matchFreq = FREQUENCIES[note];
                     if ( frequency < matchFreq ) {
-//                        double prevFreq = FREQUENCIES[note+1];
-//                        value = (int)(-FREQ_RANGE*(frequency-matchFreq)/(prevFreq-matchFreq));
+                        double prevFreq = FREQUENCIES[note+1];
+                        value = (int)(-FREQ_RANGE*(frequency-matchFreq)/(prevFreq-matchFreq));
                         try {noteInfo.add(note);}
                         catch (RuntimeException ignored){}
                     }
                     else {
-//                        double nextFreq = FREQUENCIES[note-1];
-//                        value = (int)(FREQ_RANGE*(frequency-matchFreq)/(nextFreq-matchFreq));
+                        double nextFreq = FREQUENCIES[note-1];
+                        value = (int)(FREQ_RANGE*(frequency-matchFreq)/(nextFreq-matchFreq));
                         try {noteInfo.add(note);}
                         catch (RuntimeException ignored){}
                     }
