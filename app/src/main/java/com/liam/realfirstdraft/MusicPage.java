@@ -25,12 +25,12 @@ public class MusicPage extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_music_page);
-        init_phone_music_grid();
-        final ImageButton backButton1 = (ImageButton) findViewById(R.id.backButton1);
+        init_Music_List();
 
+        //button to go to main activity
+        final ImageButton backButton1 = (ImageButton) findViewById(R.id.backButton1);
         backButton1.setOnClickListener(
                 new ImageButton.OnClickListener()
-
                 {
                     @Override
                     public void onClick(View v) {
@@ -38,29 +38,24 @@ public class MusicPage extends AppCompatActivity {
                         startActivity(e);
                     }
                 }
-
         );
-
     }
 
-
-    private void init_phone_music_grid() {
+    //creates list of music
+    private void init_Music_List() {
         System.gc();
         musiclist = (ListView) findViewById(R.id.listView);
-
-
         File extDirectory = new File(Environment.getExternalStorageDirectory(), "Humposer");
         fileList = extDirectory.listFiles();
 
-
-
-
-
-
-
         ArrayList<String> listViewValues = new ArrayList<>();
-        for (File aFileList : fileList) {
-            listViewValues.add(aFileList.getName());
+        if(fileList!=null) {
+            for (File aFileList : fileList) {
+                listViewValues.add(aFileList.getName());
+            }
+        }else {
+            System.out.print("fileList not found");
+            return;
         }
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
@@ -76,7 +71,8 @@ public class MusicPage extends AppCompatActivity {
 
 
 
-
+    //makes onitemclick listen which, when clicked sends user to MusicPlayer page,
+    // where the user can play the selected song
     protected AdapterView.OnItemClickListener musicgridlistener = new AdapterView.OnItemClickListener() {
         public void onItemClick(AdapterView parent, View v, int position, long id) {
             System.gc();

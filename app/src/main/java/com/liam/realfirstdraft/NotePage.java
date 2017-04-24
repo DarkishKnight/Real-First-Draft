@@ -46,14 +46,16 @@ public class NotePage extends AppCompatActivity {
     FrameLayout[] frames;
     int screenWidth;
     int screenHeight;
+    int numberOfNotes = 86;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_note_page);
 
-        name = getIntent().getExtras().getString("Name");
 
+        //get bundle from intent.
+        name = getIntent().getExtras().getString("Name");
         if(getIntent()!=null && getIntent().getExtras()!= null){
            backgroundNoteArray = getIntent().getExtras().getIntegerArrayList("Notes");
             noteArray = getIntent().getExtras().getIntegerArrayList("Notes");
@@ -107,6 +109,7 @@ public class NotePage extends AppCompatActivity {
         assert title != null;
         title.setText(name);
 
+        //deletes the song file
         ImageButton deleteButton = (ImageButton) findViewById(R.id.trashIcon);
         assert deleteButton != null;
         deleteButton.setOnClickListener(
@@ -140,9 +143,8 @@ public class NotePage extends AppCompatActivity {
 
 
 
-
+        //return to homepage
         ImageButton homeButton = (ImageButton) findViewById(R.id.homeButton);
-
         assert homeButton != null;
         homeButton.setOnClickListener(
                new ImageButton.OnClickListener()
@@ -154,11 +156,11 @@ public class NotePage extends AppCompatActivity {
                        startActivity(z);
                    }
                }
-
        );
 
-        ImageButton sheetMusic = (ImageButton) findViewById(R.id.sheetMusicButton);
 
+        //go to sheet music page
+        ImageButton sheetMusic = (ImageButton) findViewById(R.id.sheetMusicButton);
         assert sheetMusic != null;
         sheetMusic.setOnClickListener(
                 new ImageButton.OnClickListener() {
@@ -175,14 +177,23 @@ public class NotePage extends AppCompatActivity {
 
 
     }
+
+    //create the sheet music
+    //TODO make this more readable
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private void addingNotesToArray(){
   //      quarternoteDrawables();
+        //sets the images of the background
         backgroundImages();
+        //sets the individual note images to overlay
         noteImages();
+        //array full of coordinates of where bass clef notes go
         BdrawablePositions();
+        //array full of coordinates of where treble clef notes go
         TdrawablePositions();
+        //displays the backgroundImages array
         displayBackgroundImages();
+        //creates copies of image views to put images in.
         copyImageViews();
     }
 
@@ -445,15 +456,16 @@ public class NotePage extends AppCompatActivity {
 // size
     private void backgroundImages(){
         int count = 0;
-        for(int i = 0; i<=86; i++) {
+        for(int i = 0; i<=numberOfNotes; i++) {
             sheets.put(count, R.drawable.sheetmusicbackground);
             count++;
         }
     }
 
+    //add the note images to an array
     private void noteImages(){
         int count = 0;
-        for(int i = 0; i<86; i++){
+        for(int i = 0; i<numberOfNotes; i++){
             notes.put(count, R.drawable.note);
             count++;
         }

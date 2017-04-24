@@ -19,8 +19,9 @@ public class MainActivity extends AppCompatActivity{
        // Animation an2 = AnimationUtils.loadAnimation(getBaseContext(), R.anim.unglow);
        // rl.startAnimation(an2);
 
-       ImageButton bottomButton = (ImageButton) findViewById(R.id.buttomButton);
 
+        //button to send to recorded music page
+       ImageButton bottomButton = (ImageButton) findViewById(R.id.buttomButton);
         bottomButton.setOnClickListener(
                 new ImageButton.OnClickListener() {
                     @Override
@@ -31,8 +32,8 @@ public class MainActivity extends AppCompatActivity{
                 }
         );
 
+       //button to send to sheet music page
        ImageButton centerButton = (ImageButton) findViewById(R.id.centerButton);
-
         centerButton.setOnClickListener(
                 new ImageButton.OnClickListener(){
                     public void onClick(View v){
@@ -42,8 +43,8 @@ public class MainActivity extends AppCompatActivity{
                 }
         );
 
+        //button to take you to recorder page
         ImageButton topButton = (ImageButton) findViewById(R.id.topButton);
-
         topButton.setOnClickListener(
                 new ImageButton.OnClickListener(){
                     public void onClick(View v) {
@@ -54,6 +55,7 @@ public class MainActivity extends AppCompatActivity{
         );
 
     }
+
 
     @Override
     protected void onDestroy() {
