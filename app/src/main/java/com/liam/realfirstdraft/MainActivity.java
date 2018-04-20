@@ -9,16 +9,9 @@ import android.widget.ImageButton;
 
 
 public class MainActivity extends AppCompatActivity{
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-      //  RelativeLayout rl = (RelativeLayout) findViewById(R.id.mainLayout);
-       // Animation an2 = AnimationUtils.loadAnimation(getBaseContext(), R.anim.unglow);
-       // rl.startAnimation(an2);
-
 
         //button to send to recorded music page
        ImageButton bottomButton = (ImageButton) findViewById(R.id.buttomButton);
@@ -57,6 +50,7 @@ public class MainActivity extends AppCompatActivity{
     }
 
 
+    //encase stuff goes south
     @Override
     protected void onDestroy() {
         super.onDestroy();

@@ -109,7 +109,7 @@ public class NotePage extends AppCompatActivity {
         assert title != null;
         title.setText(name);
 
-        //deletes the song file
+        ///deletes the song file
         ImageButton deleteButton = (ImageButton) findViewById(R.id.trashIcon);
         assert deleteButton != null;
         deleteButton.setOnClickListener(
@@ -143,7 +143,7 @@ public class NotePage extends AppCompatActivity {
 
 
 
-        //return to homepage
+        ///return to homepage
         ImageButton homeButton = (ImageButton) findViewById(R.id.homeButton);
         assert homeButton != null;
         homeButton.setOnClickListener(
@@ -199,154 +199,28 @@ public class NotePage extends AppCompatActivity {
 
 
 
-    private void displayBackgroundImages() {
-//creates new framelayout
-        createNewLayout();
-        int y = 400;
-        int x = 73;
-        int counter = 0;
-        int m = 0;
-        int p = 1;
-        int c = ViewGroup.LayoutParams.WRAP_CONTENT;
-        int l = ViewGroup.LayoutParams.MATCH_PARENT;
-        int layoutNumber = 0;
-        int q = 0;
-//creates new imageViews to add to framelayouts
-        calculateScreenSize();
-        for (int i = 0; i < backgroundNoteArray.size(); i++) {
-            ImageView image = new ImageView(this);
-            double imgHeight = screenHeight* 0.80;
-            double imgWidth = screenWidth* 0.15;
-            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-            params.topMargin = l + y * q; //was 230 then 25
-            params.leftMargin = c + x * m; //was 47 then 67
-            image.setMaxHeight((int) imgHeight);
-            image.setMaxWidth((int) imgWidth);
-            m++;
-            //todo add function to set the first image of each line to either treble or bass clef
-            backgroundImageViews[counter] = image;
-            // Adds the view to the layout
-            if (counter != screenWidth/50 * p) { // was 9
-                frames[layoutNumber].addView(image, params);
-            }
-            counter++;
-            if (counter == screenWidth/50 * p) { // was 9
-                q++;
-                p++;
-                m = 0;
-            }
-
-
-        }
-        int imageNum = 0;
-        for (Integer note : backgroundNoteArray) {
-            if (imageNum <= backgroundNoteArray.size()) {
-                Integer d = (Integer) sheets.get(note); //was notes
-                backgroundImageViews[imageNum].setBackgroundResource(d);
-
-                imageNum++;
-            }
-
-
-        }
-    }
-
-//Todo fill with code for imageviews for the notes
-    private void copyImageViews() {
-        int counter = 0;
-        // y will be set to whatever number
-        double y = 0;
-        int x = 73;
-        int m = 0;
-        int p = 1;
-        int c = ViewGroup.LayoutParams.MATCH_PARENT;
-        int layoutNumber = 0;
-        int imageNum = 0;
-//creates new imageViews to add over the other image views
-        for (int i = 0; i < noteArray.size(); i++) {
-                if (imageNum <= noteArray.size()) {
-                    y = positions.get(i); //gets weight of where imageView should lie
-                    imageNum++;
-                }
-                ImageView noteImage = new ImageView(this);
-                FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, (int) y);
-                params.gravity = (int) y;
-                params.leftMargin = c + x * m;
-                m++;
-
-                imageViews[counter] = noteImage;
-                // Adds the view to the layout
-                if (counter != screenWidth / 50 * p) {
-                    frames[layoutNumber].addView(noteImage, params);
-                }
-                counter++;
-                if (counter == screenWidth / 50 * p) {
-                    p++;
-                    m = 0;
-                }
-            displayNoteImages();
-
-
-            }
-//        int imageNum = 0;
-//        for (Integer note : noteArray) {
-//            if (imageNum <= noteArray.size()) {
-//                Double d = positions.get(note); //gets weight of where imageView should lie
-//                imageViews[imageNum].getLayoutParams();
-//
-//
-//
-//                imageNum++;
-//            }
-//
-//
-//        }
-        }
-
-
-
-// Todo  fill with code for displaying the notes
-    private void displayNoteImages() {
+    // sets every note to a set of blank sheet music, so that the background is set to the correct
+// size
+    private void backgroundImages(){
         int count = 0;
-        for (Integer note : noteArray) {
-            if (count <= noteArray.size()) {
-                Integer d = (Integer) notes.get(note);
-                imageViews[count].setBackgroundResource(d);
-                count++;
-            }
-        }
-    }
-
-    private void createNewLayout(){
-        LinearLayout linearLayout = (LinearLayout) findViewById(R.id.linLayout);
-        int x =  0;
-        int counter1 = 0;
-        for(int i = 0; i<=1; i++) {
-            FrameLayout frameLayout = new FrameLayout(this);
-            LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-            params1.topMargin = 1 + 100 * x; //was 100
-            frames[counter1] = frameLayout;
-            assert linearLayout != null;
-            linearLayout.addView(frameLayout, params1);
-            x++;
-            counter1++;
+        for(int i = 0; i<=numberOfNotes; i++) {
+            sheets.put(count, R.drawable.sheetmusicbackground);
+            count++;
         }
     }
 
 
-//calculates screen size for positioning and sizing of images
-    private void calculateScreenSize(){
-
-        DisplayMetrics displaymetrics = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
-
-        screenHeight = displaymetrics.heightPixels;
-        screenWidth = displaymetrics.widthPixels;
+    //add the note images to an array
+    private void noteImages(){
+        int count = 0;
+        for(int i = 0; i<numberOfNotes; i++){
+            notes.put(count, R.drawable.note);
+            count++;
+        }
     }
 
 
-// the note plus where it should be positioned in relation to the imageview
-    //TODO split into drawablePositionsBassClef and drawablePositionsTrebleClef
+    //array full of coordinates of where bass clef notes go
     private void BdrawablePositions(){
         calculateScreenSize();
         positions.put(0, .05);
@@ -397,6 +271,7 @@ public class NotePage extends AppCompatActivity {
 
     }
 
+    //array full of coordinates of where treble clef notes go
     private void TdrawablePositions(){
         positions.put(39, .83);
         positions.put(40, .85);
@@ -451,25 +326,167 @@ public class NotePage extends AppCompatActivity {
 
 
 
+    private void displayBackgroundImages() {
+//creates new framelayout
+        createNewLayout();
+        int y = 400;
+        int x = 73;
+        int counter = 0;
+        int m = 0;
+        int p = 1;
+        int c = ViewGroup.LayoutParams.WRAP_CONTENT;
+        int l = ViewGroup.LayoutParams.MATCH_PARENT;
+        int layoutNumber = 0;
+        int q = 0;
 
-// sets every note to a set of blank sheet music, so that the background is set to the correct
-// size
-    private void backgroundImages(){
-        int count = 0;
-        for(int i = 0; i<=numberOfNotes; i++) {
-            sheets.put(count, R.drawable.sheetmusicbackground);
-            count++;
+//creates new imageViews to add to framelayouts
+        calculateScreenSize();
+        for (int i = 0; i < backgroundNoteArray.size(); i++) {
+            ImageView image = new ImageView(this);
+            double imgHeight = screenHeight* 0.80;
+            double imgWidth = screenWidth* 0.15;
+            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+            params.topMargin = l + y * q; //was 230 then 25
+            params.leftMargin = c + x * m; //was 47 then 67
+            image.setMaxHeight((int) imgHeight);
+            image.setMaxWidth((int) imgWidth);
+            m++;
+            //todo add function to set the first image of each line to either treble or bass clef
+            backgroundImageViews[counter] = image;
+            // Adds the view to the layout
+            if (counter != screenWidth/50 * p) { // was 9
+                frames[layoutNumber].addView(image, params);
+            }
+            counter++;
+            if (counter == screenWidth/50 * p) { // was 9
+                q++;
+                p++;
+                m = 0;
+            }
+
+
+        }
+        int imageNum = 0;
+        for (Integer note : backgroundNoteArray) {
+            if (imageNum <= backgroundNoteArray.size()) {
+                Integer d = (Integer) sheets.get(note); //was notes
+                backgroundImageViews[imageNum].setBackgroundResource(d);
+
+                imageNum++;
+            }
+
+
         }
     }
 
-    //add the note images to an array
-    private void noteImages(){
+
+//Todo fill with code for imageviews for the notes
+    private void copyImageViews() {
+        int counter = 0;
+        // y will be set to whatever number
+        double y = 0;
+        int x = 73;
+        int m = 0;
+        int p = 1;
+        int c = ViewGroup.LayoutParams.MATCH_PARENT;
+        int layoutNumber = 0;
+        int imageNum = 0;
+
+//creates new imageViews to add over the other image views
+        for (int i = 0; i < noteArray.size(); i++) {
+                if (imageNum <= noteArray.size()) {
+                    y = positions.get(i); //gets weight of where imageView should lie
+                    imageNum++;
+                }
+                ImageView noteImage = new ImageView(this);
+                FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, (int) y);
+                params.gravity = (int) y;
+                params.leftMargin = c + x * m;
+                m++;
+
+                imageViews[counter] = noteImage;
+                // Adds the view to the layout
+                if (counter != screenWidth / 50 * p) {
+                    frames[layoutNumber].addView(noteImage, params);
+                }
+                counter++;
+                if (counter == screenWidth / 50 * p) {
+                    p++;
+                    m = 0;
+                }
+            displayNoteImages();
+
+
+            }
+//        int imageNum = 0;
+//        for (Integer note : noteArray) {
+//            if (imageNum <= noteArray.size()) {
+//                Double d = positions.get(note); //gets weight of where imageView should lie
+//                imageViews[imageNum].getLayoutParams();
+//
+//
+//
+//                imageNum++;
+//            }
+//
+//
+//        }
+        }
+
+
+
+// Todo  fill with code for displaying the notes
+    private void displayNoteImages() {
+        createNewLayout();
         int count = 0;
-        for(int i = 0; i<numberOfNotes; i++){
-            notes.put(count, R.drawable.note);
-            count++;
+        for (Integer note : noteArray) {
+            if (count <= noteArray.size()) {
+                Integer d = (Integer) notes.get(note);
+                imageViews[count].setBackgroundResource(d);
+                count++;
+            }
         }
     }
+
+    //creates new frame layouts
+    private void createNewLayout(){
+        LinearLayout linearLayout = (LinearLayout) findViewById(R.id.linLayout);
+        int x =  0;
+        int counter1 = 0;
+        for(int i = 0; i<=1; i++) {
+            FrameLayout frameLayout = new FrameLayout(this);
+            LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+            params1.topMargin = 1 + 100 * x; //was 100
+            frames[counter1] = frameLayout;
+            assert linearLayout != null;
+            linearLayout.addView(frameLayout, params1);
+            x++;
+            counter1++;
+        }
+    }
+
+
+//calculates screen size for positioning and sizing of images
+    private void calculateScreenSize(){
+
+        DisplayMetrics displaymetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+
+        screenHeight = displaymetrics.heightPixels;
+        screenWidth = displaymetrics.widthPixels;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 //   private void quarternoteDrawables(){

@@ -18,17 +18,13 @@ public class SheetMusic extends AppCompatActivity {
     File[] fileList;
     String fileName;
 
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sheet_music);
-
         init_musicnote_list();
 
-
-        ImageButton backButton3 = (ImageButton) findViewById(R.id.backButton3);
-
-        backButton3.setOnClickListener(
+        ImageButton backButton = (ImageButton) findViewById(R.id.backButton3);
+        backButton.setOnClickListener(
                 new ImageButton.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -37,24 +33,14 @@ public class SheetMusic extends AppCompatActivity {
                     }
                 }
         );
-
-
-
     }
 
+    //list of sheet music
     private void init_musicnote_list() {
         System.gc();
         sheetMusic = (ListView) findViewById(R.id.sheetList);
-
-
         File noteDir = new File(Environment.getExternalStorageDirectory(),"Humposer Notes");
         fileList = noteDir.listFiles();
-
-
-
-
-
-
 
         ArrayList<String> listViewValues = new ArrayList<>();
         for (File aFileList : fileList) {
@@ -68,11 +54,6 @@ public class SheetMusic extends AppCompatActivity {
 
         sheetMusic.setOnItemClickListener(noteListener);
     }
-
-
-
-
-
 
 
     protected AdapterView.OnItemClickListener noteListener = new AdapterView.OnItemClickListener() {

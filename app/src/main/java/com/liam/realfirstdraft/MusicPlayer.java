@@ -34,37 +34,22 @@ public class MusicPlayer extends AppCompatActivity {
     private  TextView songNameText;
     private ArrayList<Integer> noteInfo = new ArrayList<>();
     private TextView hold;
+    private static final double[] FREQUENCIES = { 174.61, 164.81, 155.56, 146.83, 138.59, 130.81, 123.47, 116.54, 110.00, 103.83, 98.00, 92.50, 87.31, 82.41, 77.78};
+    private static final String[] NAME = { "F",    "E",    "D#",   "D",    "C#",   "C",    "B",    "A#",   "A",    "G#",   "G",   "F#",  "F",   "E",   "D#"};
     File file;
     String name;
 
 
 
-
-    protected void renameFile() {
-
-        newFile = new File(songFile.getParent() + File.separator + saveToFileName);
-        songFile.renameTo(newFile);
-        // copy tempFile to saveToFileName
-
-        File extDirectory = new File(Environment.getExternalStorageDirectory(), "Humposer");
-        File[] fileList = extDirectory.listFiles();
-        for (File aFileList : fileList) {
-            System.out.println(aFileList.getAbsoluteFile());
-        }
-
-    }
-
-
-
-  @Override
     protected void onCreate(Bundle savedInstanceState) {
       super.onCreate(savedInstanceState);
       setContentView(R.layout.activity_music_player);
-//        activityList();
+
       hold = (TextView) findViewById(R.id.pleaseHold);
       assert hold != null;
       hold.setVisibility(View.INVISIBLE);
 
+      //get the info sent over from the music page
       final String id = getIntent().getExtras().getString("listItem");
       songNameText = (TextView) findViewById(R.id.songNameText);
       assert songNameText != null;
@@ -72,42 +57,33 @@ public class MusicPlayer extends AppCompatActivity {
       songFile = new File(extDirectory + File.separator + id);
       newFile = new File(songFile.getParent() + File.separator + saveToFileName);
 
-
-      ImageButton backButton2 = (ImageButton) findViewById(R.id.backButton2);
-
-      assert backButton2 != null;
-      backButton2.setOnClickListener(
+      //button to take you back to the main activity
+      ImageButton backButton = (ImageButton) findViewById(R.id.backButton2);
+      assert backButton != null;
+      backButton.setOnClickListener(
               new ImageButton.OnClickListener()
-
               {
-                  @Override
                   public void onClick(View v) {
                       Intent z = new Intent(getBaseContext(), MainActivity.class);
                       startActivity(z);
                   }
               }
-
       );
 
+      //button to take you to music page
       ImageButton musicPage = (ImageButton) findViewById(R.id.torecorderpage);
-
       assert musicPage != null;
       musicPage.setOnClickListener(
               new ImageButton.OnClickListener()
-
               {
-                  @Override
                   public void onClick(View v) {
                       Intent q = new Intent(getBaseContext(), AudioRecordPages.class);
                       startActivity(q);
                   }
               }
-
       );
 
-
-//Button
-
+      //delete button
       ImageButton deleteButton = (ImageButton) findViewById(R.id.deleteButton);
       assert deleteButton != null;
       deleteButton.setOnClickListener(
@@ -116,7 +92,6 @@ public class MusicPlayer extends AppCompatActivity {
                   public void onClick(View v) {
                       AlertDialog.Builder maker = new AlertDialog.Builder(MusicPlayer.this);
                       maker.setMessage("Delete Song");
-
                       maker.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                           @Override
                           public void onClick(DialogInterface dialog, int which) {
@@ -134,7 +109,6 @@ public class MusicPlayer extends AppCompatActivity {
                           }
                       });
                       maker.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                          @Override
                           public void onClick(DialogInterface dialog, int which) {
                               dialog.cancel();
                           }
@@ -146,8 +120,7 @@ public class MusicPlayer extends AppCompatActivity {
               }
       );
 
-      //button
-
+      //play button
       final ImageButton playButton = (ImageButton) findViewById(R.id.playButton);
       int[] state = new int[]{0};
       int maxStates = 2;
@@ -192,31 +165,24 @@ public class MusicPlayer extends AppCompatActivity {
 
                       }
                       mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                          @Override
                           public void onCompletion(MediaPlayer mp) {
                               playButton.setBackgroundResource(R.drawable.playback);
                           }
                       });
 
                       }
-
-
               });
 
-
-//Botton
+      //Botton to rename song
       ImageButton renameButton = (ImageButton) findViewById(R.id.renameButton);
       assert renameButton != null;
       renameButton.setOnClickListener(
               new ImageButton.OnClickListener() {
-                  @Override
                   public void onClick(final View v) {
                       AlertDialog.Builder builder = new AlertDialog.Builder(MusicPlayer.this);
                       builder.setTitle(id);
 
-
                       final EditText input = new EditText(MusicPlayer.this);
-// Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
                       input.setInputType(InputType.TYPE_CLASS_TEXT);
                       builder.setView(input);
                       input.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -226,9 +192,8 @@ public class MusicPlayer extends AppCompatActivity {
                               inputMgr.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
                           }
                       });
-// Set up the buttons
+                      //ok button
                       builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                          @Override
                           public void onClick(DialogInterface dialog, int which) {
                               saveToFileName = input.getText().toString();
                               renameFile();
@@ -242,12 +207,10 @@ public class MusicPlayer extends AppCompatActivity {
                                   }
                               });
                               dialog.dismiss();
-
-
                           }
                       });
+                      //cancel button
                       builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                          @Override
                           public void onClick(DialogInterface dialog, int which) {
                               dialog.dismiss();
                               input.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -257,8 +220,6 @@ public class MusicPlayer extends AppCompatActivity {
                                       inputMgnr.hideSoftInputFromWindow(v.getWindowToken(), 0);
                                   }
                               });
-
-
                           }
                       });
 
@@ -267,16 +228,14 @@ public class MusicPlayer extends AppCompatActivity {
 
               }
       );
-      ImageButton fftButton = (ImageButton) findViewById(R.id.fftButton);
-      assert fftButton != null;
-      fftButton.setOnClickListener(
+      //button to analyze the sound
+      ImageButton AutoCorrelateButton = (ImageButton) findViewById(R.id.fftButton);
+      assert AutoCorrelateButton != null;
+        AutoCorrelateButton.setOnClickListener(
               new ImageButton.OnClickListener() {
-                  @Override
                   public void onClick(View v) {
                       hold.setVisibility(View.VISIBLE);
-
                       System.out.println("Selected file = " + songFile.getAbsolutePath());
-
                       ByteArrayOutputStream out = new ByteArrayOutputStream();
                       BufferedInputStream in = null;
                       try {
@@ -298,17 +257,22 @@ public class MusicPlayer extends AppCompatActivity {
                       Intent p = new Intent(getBaseContext(), NotePage.class);
                       p.putExtras(b);
                       startActivity(p);
-
                       }
-
-
-
                   }
-
       );
   }
-    private static final double[] FREQUENCIES = { 174.61, 164.81, 155.56, 146.83, 138.59, 130.81, 123.47, 116.54, 110.00, 103.83, 98.00, 92.50, 87.31, 82.41, 77.78};
-    private static final String[] NAME = { "F",    "E",    "D#",   "D",    "C#",   "C",    "B",    "A#",   "A",    "G#",   "G",   "F#",  "F",   "E",   "D#"};
+    //rename the file
+    protected void renameFile() {
+        newFile = new File(songFile.getParent() + File.separator + saveToFileName);
+        songFile.renameTo(newFile);
+        // copy tempFile to saveToFileName
+        File extDirectory = new File(Environment.getExternalStorageDirectory(), "Humposer");
+        File[] fileList = extDirectory.listFiles();
+        for (File aFileList : fileList) {
+            System.out.println(aFileList.getAbsoluteFile());
+        }
+    }
+
 //    private static final double[] FREQUENCIES =
 //        {29.14, 30.87,
 //        32.70, 34.65, 36.71, 38.89, 41.20, 43.65, 46.25, 49.00, 51.91, 55.00, 58.27, 61.74,
@@ -332,6 +296,7 @@ public class MusicPlayer extends AppCompatActivity {
 //            "C7","C7#","D7","D7#","E7","F7","F7#","G7","G7#","A7","A7#","B7",
 //            "C8"};
 
+    //TODO change the normaliseFreq so that it either doesn't normalize at all, or it only normalises super high or low freq
     private static double normaliseFreq(double hz) {
         // get hz into a standard range to make things easier to deal with
         while ( hz < 82.41 ) {
@@ -343,6 +308,7 @@ public class MusicPlayer extends AppCompatActivity {
         return hz;
     }
 
+    //find the closest note to the frequency so that we don't end up with half tones.
     private static int closestNote(double hz) {
         double minDist = Double.MAX_VALUE;
         int minFreq = -1;
@@ -353,16 +319,11 @@ public class MusicPlayer extends AppCompatActivity {
                 minFreq=i;
             }
         }
-
         return minFreq;
     }
 
+    //analyse recording frequency
     public void autoCorrelate(BufferedInputStream in) {
-
-
-//        progressBar = (ProgressBar) findViewById(R.id.progressBar);
-//        progressBar.setVisibility(View.VISIBLE);
-
         File noteDir = new File(Environment.getExternalStorageDirectory(),"Humposer Notes");
         if (!noteDir.exists()){
             noteDir.mkdir();}
@@ -373,7 +334,7 @@ public class MusicPlayer extends AppCompatActivity {
         byte[] buffer = new byte[2*4800];
         int[] a = new int[buffer.length/2];
 
-        int n = -1;
+        int n;
         try {
             while ((n = in.read(buffer)) > 0) {
 
@@ -385,11 +346,7 @@ public class MusicPlayer extends AppCompatActivity {
                 double prevDiff = 0;
                 double prevDx = 0;
                 double maxDiff = 0;
-
-
                 int sampleLen = 0;
-
-
 
                 int len = a.length/4;
 //            this is original
@@ -461,12 +418,7 @@ public class MusicPlayer extends AppCompatActivity {
     }
 
 
-
-
-
-
-
-
+    //stop the media player
     private void ditchMediaPlayer() {
         if (mediaPlayer != null) {
             try {
@@ -476,6 +428,8 @@ public class MusicPlayer extends AppCompatActivity {
             }
         }
     }
+
+    //pause recording
     private void pauseRecording() {
         if (mediaPlayer != null)
             mediaPlayer.stop();

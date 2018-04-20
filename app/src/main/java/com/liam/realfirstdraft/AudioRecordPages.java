@@ -16,7 +16,6 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -25,46 +24,22 @@ import java.io.IOException;
 
 
 public class AudioRecordPages extends AppCompatActivity {
-
     String saveToNewFileName;
     File saveToNewFile;
     AnimationDrawable glowAnimation1;
     private static final int RECORDER_BPP = 16;
-//    private static final String AUDIO_RECORDER_FILE_EXT_WAV = ".wav";
-//    private static final String AUDIO_RECORDER_FOLDER = "Humposer";
     private static final String AUDIO_RECORDER_TEMP_FILE = "record_temp.raw";
     private static final int RECORDER_SAMPLERATE = 44100;
-//    private static final int RECORDER_CHANNELS = AudioFormat.CHANNEL_IN_STEREO;
-//    private static final int RECORDER_AUDIO_ENCODING = AudioFormat.ENCODING_PCM_16BIT;
-
     private AudioRecord recorder = null;
     private int bufferSize = 0;
     private Thread recordingThread = null;
     private boolean isRecording = false;
 
 
-
-    protected void saveFile() {
-
-        File extDirectory = new File(Environment.getExternalStorageDirectory(),"Humposer");
-        saveToNewFile = new File(extDirectory.getAbsolutePath()+File.separator+saveToNewFileName);
-        copyWaveFile(getTempFilename(), saveToNewFile.getAbsolutePath());
-
-        File[] fileList = extDirectory.listFiles();
-        for (File aFileList : fileList) {
-            System.out.println(aFileList.getAbsoluteFile());
-        }
-        deleteTempFile();
-    }
-
-
-
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.content_audio_recorder_page);
-
+        //create layout
         RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.recorderLayout1);
         glowAnimation1 = (AnimationDrawable) relativeLayout.getBackground();
 
@@ -73,13 +48,12 @@ public class AudioRecordPages extends AppCompatActivity {
                 AudioFormat.ENCODING_PCM_16BIT);
 
         final EditText beginningText = new EditText(this);
-
         beginningText.setHint("Enter Name Here");
 
+        //set up recording button
         final ImageButton recordButton = (ImageButton) findViewById(R.id.recordButton1);
         int[] state = {0};
         int maxStates = 2;
-
         final int[] finalState1 = state;
         final int finalMaxStates1 = maxStates;
 
@@ -101,18 +75,21 @@ public class AudioRecordPages extends AppCompatActivity {
                                 break;
                             case 1: // stop recording
                                 recordButton.setBackgroundResource(R.drawable.record);
-                                stopRecording();
+                                try {
+                                    stopRecording();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
                                 glowAnimation1.stop();
 
                                 AlertDialog.Builder builder = new AlertDialog.Builder(AudioRecordPages.this);
                                 builder.setTitle("Song Name");
 
                                 final EditText input = new EditText(AudioRecordPages.this);
-// Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
                                 input.setInputType(InputType.TYPE_CLASS_TEXT);
                                 builder.setView(input);
 
-// Set up the buttons
+                                // Set up the buttons to set name of song
                                 builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
@@ -135,12 +112,10 @@ public class AudioRecordPages extends AppCompatActivity {
 
         );
 
-
-        final ImageButton backButton = (ImageButton) findViewById(R.id.backButton3);
-
+        //takes you to the main activity
+        ImageButton backButton = (ImageButton) findViewById(R.id.backButton3);
         backButton.setOnClickListener(
                 new ImageButton.OnClickListener() {
-                    @Override
                     public void onClick(View v) {
                         Intent e = new Intent(getBaseContext(), MainActivity.class);
                         startActivity(e);
@@ -148,12 +123,10 @@ public class AudioRecordPages extends AppCompatActivity {
                 }
         );
 
-
+        //take you to the recorded music page
         ImageButton musicbutton = (ImageButton) findViewById(R.id.toMusicPage1);
-
         musicbutton.setOnClickListener(
                 new ImageButton.OnClickListener() {
-                    @Override
                     public void onClick(View v) {
                         Intent o = new Intent(getBaseContext(), MusicPage.class);
                         startActivity(o);
@@ -162,11 +135,10 @@ public class AudioRecordPages extends AppCompatActivity {
         );
     }
 
-
+// begin recording
     private void startRecording(){
         recorder = new AudioRecord(MediaRecorder.AudioSource.MIC,
                 44100, AudioFormat.CHANNEL_IN_STEREO, AudioFormat.ENCODING_PCM_16BIT, bufferSize);
-
 
         int i = recorder.getState();
         if(i==1)
@@ -176,7 +148,6 @@ public class AudioRecordPages extends AppCompatActivity {
 
         recordingThread = new Thread(new Runnable() {
 
-            @Override
             public void run() {
                 writeAudioDataToFile();
             }
@@ -185,6 +156,7 @@ public class AudioRecordPages extends AppCompatActivity {
         recordingThread.start();
     }
 
+    //finish recording
     private void stopRecording(){
         if(null != recorder){
             isRecording = false;
@@ -198,24 +170,35 @@ public class AudioRecordPages extends AppCompatActivity {
             recorder = null;
             recordingThread = null;
         }
-//        copyWaveFile(getTempFilename(),getFilename());
-//        deleteTempFile();
     }
 
+    //save file method
+    protected void saveFile() {
+        File extDirectory = new File(Environment.getExternalStorageDirectory(),"Humposer");
+        saveToNewFile = new File(extDirectory.getAbsolutePath()+File.separator+saveToNewFileName);
+        copyWaveFile(getTempFilename(), saveToNewFile.getAbsolutePath());
+
+        File[] fileList = extDirectory.listFiles();
+        for (File aFileList : fileList) {
+            System.out.println(aFileList.getAbsoluteFile());
+        }
+        deleteTempFile();
+    }
+
+
+
+    //takes audio recording and write its to the file
     private void writeAudioDataToFile(){
         byte data[] = new byte[bufferSize];
         String filename = getTempFilename();
         FileOutputStream os = null;
-
         try {
             os = new FileOutputStream(filename);
         } catch (FileNotFoundException e) {
-// TODO Auto-generated catch block
             e.printStackTrace();
         }
 
         int read;
-
         if(null != os){
             while(isRecording){
                 read = recorder.read(data, 0, bufferSize);
@@ -237,17 +220,20 @@ public class AudioRecordPages extends AppCompatActivity {
         }
     }
 
+
+
+    //delete temp file
     private void deleteTempFile() {
         File file = new File(getTempFilename());
-
         file.delete();
     }
 
+    //copy wave file
     private void copyWaveFile(String inFilename,String outFilename){
         FileInputStream in;
         FileOutputStream out;
-        long totalAudioLen = 0;
-        long totalDataLen = totalAudioLen + 36;
+        long totalAudioLen;
+        long totalDataLen;
         long longSampleRate = RECORDER_SAMPLERATE;
         int channels = 2;
         long byteRate = RECORDER_BPP * RECORDER_SAMPLERATE * channels/8;
@@ -266,13 +252,14 @@ public class AudioRecordPages extends AppCompatActivity {
             while(in.read(data) != -1){
                 out.write(data);
             }
-
             in.close();
             out.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
+    //write the wavefile header
     private void WriteWaveFileHeader(
             FileOutputStream out, long totalAudioLen,
             long totalDataLen, long longSampleRate, int channels,
@@ -324,25 +311,11 @@ public class AudioRecordPages extends AppCompatActivity {
         header[41] = (byte) ((totalAudioLen >> 8) & 0xff);
         header[42] = (byte) ((totalAudioLen >> 16) & 0xff);
         header[43] = (byte) ((totalAudioLen >> 24) & 0xff);
-
         out.write(header, 0, 44);
     }
 
 
-
-
-//    private String getFilename(){
-//
-//        String filepath = Environment.getExternalStorageDirectory().getPath();
-//        File file = new File(filepath,AUDIO_RECORDER_FOLDER);
-//
-//        if(!file.exists()){
-//            file.mkdirs();
-//        }
-//
-//        return (file.getAbsolutePath() + "/" + System.currentTimeMillis() + AUDIO_RECORDER_FILE_EXT_WAV);
-//    }
-
+    //getter for temp file name
     private String getTempFilename(){
         File audioDir = new File(Environment.getExternalStorageDirectory(),"Humposer");
         if (!audioDir.exists())
@@ -354,15 +327,9 @@ public class AudioRecordPages extends AppCompatActivity {
             tempFile.delete();
 
         return (audioDir.getAbsolutePath() + "/" + AUDIO_RECORDER_TEMP_FILE);
-
-//        File audioDir = new File("/data/com.liam/Humposer");
-//        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-//        tempFile1 = new File(audioDir, "tempAudioFile_"+timeStamp+".wav");
-
-//        return (audioDir.getAbsolutePath() + "/" + AUDIO_RECORDER_TEMP_FILE);
     }
 
-    @Override
+    //if the system crashes
     protected void onDestroy() {
         super.onDestroy();
         unbindDrawables(findViewById(R.id.recorderLayout));

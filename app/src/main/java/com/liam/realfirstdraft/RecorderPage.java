@@ -23,50 +23,27 @@ import java.util.Date;
 public class RecorderPage extends AppCompatActivity {
 
     private MediaRecorder mediaRecorder;
-   // private MediaPlayer mediaPlayer;
     File tempFile;
     String saveToFileName;
     File newFile;
     AnimationDrawable glowAnimation;
 
-    protected void saveFile() {
 
-        newFile = new File(tempFile.getParent()+File.separator+saveToFileName);
-        tempFile.renameTo(newFile);
-
-
-        // copy tempFile to saveToFileName
-
-        File extDirectory = new File(Environment.getExternalStorageDirectory(),"Humposer");
-        File[] fileList = extDirectory.listFiles();
-        for (File aFileList : fileList) {
-            System.out.println(aFileList.getAbsoluteFile());
-        }
-
-    }
-
-
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recorder_page);
-
         RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.recorderLayout);
         glowAnimation = (AnimationDrawable) relativeLayout.getBackground();
 
-
         final EditText beginningText = new EditText(this);
-
         beginningText.setHint("Enter Name Here");
 
+        //record button
         final ImageButton recordButton = (ImageButton) findViewById(R.id.recordButton);
         int[] state = {0};
         int maxStates = 2;
-
         final int[] finalState1 = state;
         final int finalMaxStates1 = maxStates;
-
         recordButton.setOnClickListener(
                 new ImageButton.OnClickListener() {
                     public void onClick(View v) {
@@ -120,9 +97,8 @@ public class RecorderPage extends AppCompatActivity {
         );
 
 
-
+        //back button
         final ImageButton backButton = (ImageButton) findViewById(R.id.backButton);
-
         backButton.setOnClickListener(
                 new ImageButton.OnClickListener() {
                     @Override
@@ -133,9 +109,8 @@ public class RecorderPage extends AppCompatActivity {
                 }
         );
 
-
+        //music page button
         ImageButton musicbutton = (ImageButton) findViewById(R.id.toMusicPage);
-
         musicbutton.setOnClickListener(
                 new ImageButton.OnClickListener() {
                     @Override
@@ -147,12 +122,21 @@ public class RecorderPage extends AppCompatActivity {
         );
     }
 
+    //save the file
+    protected void saveFile() {
+        newFile = new File(tempFile.getParent()+File.separator+saveToFileName);
+        tempFile.renameTo(newFile);
+        // copy tempFile to saveToFileName
+        File extDirectory = new File(Environment.getExternalStorageDirectory(),"Humposer");
+        File[] fileList = extDirectory.listFiles();
+        for (File aFileList : fileList) {
+            System.out.println(aFileList.getAbsoluteFile());
+        }
+    }
 
-
-
+    //record
     private void beginRecording() throws Exception {
         ditchMediaRecorder();
-
         String state = Environment.getExternalStorageState();
         if (Environment.MEDIA_MOUNTED.equals(state)) {
             System.out.println("External storage is writable");
@@ -177,19 +161,19 @@ public class RecorderPage extends AppCompatActivity {
         mediaRecorder.start();
                     }
 
-
+    //stop recording
     private void stopRecording() {
         if (mediaRecorder != null)
             mediaRecorder.stop();
     }
 
+    //make sure mediarecorder is null
     private void ditchMediaRecorder() {
         if (mediaRecorder != null)
             mediaRecorder.release();
-
     }
 
-    @Override
+    //encase stuff goes bad
     protected void onDestroy() {
         super.onDestroy();
         unbindDrawables(findViewById(R.id.recorderLayout));
@@ -207,5 +191,4 @@ public class RecorderPage extends AppCompatActivity {
             ((ViewGroup) view).removeAllViews();
         }
     }
-
 }

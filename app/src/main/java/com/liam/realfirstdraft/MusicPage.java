@@ -21,7 +21,6 @@ public class MusicPage extends AppCompatActivity {
     String listFile;
 
 
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_music_page);
@@ -32,7 +31,6 @@ public class MusicPage extends AppCompatActivity {
         backButton1.setOnClickListener(
                 new ImageButton.OnClickListener()
                 {
-                    @Override
                     public void onClick(View v) {
                         Intent e = new Intent(getBaseContext(), MainActivity.class);
                         startActivity(e);
@@ -62,17 +60,12 @@ public class MusicPage extends AppCompatActivity {
                 R.layout.custom_textview,
                 listViewValues.toArray(new String[listViewValues.size()]));
         musiclist.setAdapter(adapter);
-
         musiclist.setOnItemClickListener(musicgridlistener);
     }
 
 
-
-
-
-
     //makes onitemclick listen which, when clicked sends user to MusicPlayer page,
-    // where the user can play the selected song
+    //where the user can play the selected song
     protected AdapterView.OnItemClickListener musicgridlistener = new AdapterView.OnItemClickListener() {
         public void onItemClick(AdapterView parent, View v, int position, long id) {
             System.gc();
@@ -86,7 +79,7 @@ public class MusicPage extends AppCompatActivity {
 
         }
     };
-        }
+}
 
 
 
